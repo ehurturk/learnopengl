@@ -142,6 +142,33 @@ LearnOpenGL/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/build
 .PHONY : LearnOpenGL/fast
 
+src/Component.o: src/Component.cpp.o
+
+.PHONY : src/Component.o
+
+# target to build an object file
+src/Component.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Component.cpp.o
+.PHONY : src/Component.cpp.o
+
+src/Component.i: src/Component.cpp.i
+
+.PHONY : src/Component.i
+
+# target to preprocess a source file
+src/Component.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Component.cpp.i
+.PHONY : src/Component.cpp.i
+
+src/Component.s: src/Component.cpp.s
+
+.PHONY : src/Component.s
+
+# target to generate assembly for a file
+src/Component.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Component.cpp.s
+.PHONY : src/Component.cpp.s
+
 src/Engine.o: src/Engine.cpp.o
 
 .PHONY : src/Engine.o
@@ -168,6 +195,168 @@ src/Engine.s: src/Engine.cpp.s
 src/Engine.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Engine.cpp.s
 .PHONY : src/Engine.cpp.s
+
+src/Entity.o: src/Entity.cpp.o
+
+.PHONY : src/Entity.o
+
+# target to build an object file
+src/Entity.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Entity.cpp.o
+.PHONY : src/Entity.cpp.o
+
+src/Entity.i: src/Entity.cpp.i
+
+.PHONY : src/Entity.i
+
+# target to preprocess a source file
+src/Entity.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Entity.cpp.i
+.PHONY : src/Entity.cpp.i
+
+src/Entity.s: src/Entity.cpp.s
+
+.PHONY : src/Entity.s
+
+# target to generate assembly for a file
+src/Entity.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Entity.cpp.s
+.PHONY : src/Entity.cpp.s
+
+src/Input.o: src/Input.cpp.o
+
+.PHONY : src/Input.o
+
+# target to build an object file
+src/Input.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Input.cpp.o
+.PHONY : src/Input.cpp.o
+
+src/Input.i: src/Input.cpp.i
+
+.PHONY : src/Input.i
+
+# target to preprocess a source file
+src/Input.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Input.cpp.i
+.PHONY : src/Input.cpp.i
+
+src/Input.s: src/Input.cpp.s
+
+.PHONY : src/Input.s
+
+# target to generate assembly for a file
+src/Input.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Input.cpp.s
+.PHONY : src/Input.cpp.s
+
+src/Light.o: src/Light.cpp.o
+
+.PHONY : src/Light.o
+
+# target to build an object file
+src/Light.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Light.cpp.o
+.PHONY : src/Light.cpp.o
+
+src/Light.i: src/Light.cpp.i
+
+.PHONY : src/Light.i
+
+# target to preprocess a source file
+src/Light.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Light.cpp.i
+.PHONY : src/Light.cpp.i
+
+src/Light.s: src/Light.cpp.s
+
+.PHONY : src/Light.s
+
+# target to generate assembly for a file
+src/Light.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Light.cpp.s
+.PHONY : src/Light.cpp.s
+
+src/Mesh.o: src/Mesh.cpp.o
+
+.PHONY : src/Mesh.o
+
+# target to build an object file
+src/Mesh.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Mesh.cpp.o
+.PHONY : src/Mesh.cpp.o
+
+src/Mesh.i: src/Mesh.cpp.i
+
+.PHONY : src/Mesh.i
+
+# target to preprocess a source file
+src/Mesh.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Mesh.cpp.i
+.PHONY : src/Mesh.cpp.i
+
+src/Mesh.s: src/Mesh.cpp.s
+
+.PHONY : src/Mesh.s
+
+# target to generate assembly for a file
+src/Mesh.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Mesh.cpp.s
+.PHONY : src/Mesh.cpp.s
+
+src/Model.o: src/Model.cpp.o
+
+.PHONY : src/Model.o
+
+# target to build an object file
+src/Model.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Model.cpp.o
+.PHONY : src/Model.cpp.o
+
+src/Model.i: src/Model.cpp.i
+
+.PHONY : src/Model.i
+
+# target to preprocess a source file
+src/Model.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Model.cpp.i
+.PHONY : src/Model.cpp.i
+
+src/Model.s: src/Model.cpp.s
+
+.PHONY : src/Model.s
+
+# target to generate assembly for a file
+src/Model.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Model.cpp.s
+.PHONY : src/Model.cpp.s
+
+src/Resource.o: src/Resource.cpp.o
+
+.PHONY : src/Resource.o
+
+# target to build an object file
+src/Resource.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Resource.cpp.o
+.PHONY : src/Resource.cpp.o
+
+src/Resource.i: src/Resource.cpp.i
+
+.PHONY : src/Resource.i
+
+# target to preprocess a source file
+src/Resource.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Resource.cpp.i
+.PHONY : src/Resource.cpp.i
+
+src/Resource.s: src/Resource.cpp.s
+
+.PHONY : src/Resource.s
+
+# target to generate assembly for a file
+src/Resource.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Resource.cpp.s
+.PHONY : src/Resource.cpp.s
 
 src/Shader.o: src/Shader.cpp.o
 
@@ -222,6 +411,60 @@ src/Utils.s: src/Utils.cpp.s
 src/Utils.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Utils.cpp.s
 .PHONY : src/Utils.cpp.s
+
+src/Window.o: src/Window.cpp.o
+
+.PHONY : src/Window.o
+
+# target to build an object file
+src/Window.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Window.cpp.o
+.PHONY : src/Window.cpp.o
+
+src/Window.i: src/Window.cpp.i
+
+.PHONY : src/Window.i
+
+# target to preprocess a source file
+src/Window.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Window.cpp.i
+.PHONY : src/Window.cpp.i
+
+src/Window.s: src/Window.cpp.s
+
+.PHONY : src/Window.s
+
+# target to generate assembly for a file
+src/Window.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/Window.cpp.s
+.PHONY : src/Window.cpp.s
+
+src/components/Transform.o: src/components/Transform.cpp.o
+
+.PHONY : src/components/Transform.o
+
+# target to build an object file
+src/components/Transform.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/components/Transform.cpp.o
+.PHONY : src/components/Transform.cpp.o
+
+src/components/Transform.i: src/components/Transform.cpp.i
+
+.PHONY : src/components/Transform.i
+
+# target to preprocess a source file
+src/components/Transform.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/components/Transform.cpp.i
+.PHONY : src/components/Transform.cpp.i
+
+src/components/Transform.s: src/components/Transform.cpp.s
+
+.PHONY : src/components/Transform.s
+
+# target to generate assembly for a file
+src/components/Transform.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LearnOpenGL.dir/build.make CMakeFiles/LearnOpenGL.dir/src/components/Transform.cpp.s
+.PHONY : src/components/Transform.cpp.s
 
 src/main.o: src/main.cpp.o
 
@@ -502,15 +745,42 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... LearnOpenGL"
+	@echo "... src/Component.o"
+	@echo "... src/Component.i"
+	@echo "... src/Component.s"
 	@echo "... src/Engine.o"
 	@echo "... src/Engine.i"
 	@echo "... src/Engine.s"
+	@echo "... src/Entity.o"
+	@echo "... src/Entity.i"
+	@echo "... src/Entity.s"
+	@echo "... src/Input.o"
+	@echo "... src/Input.i"
+	@echo "... src/Input.s"
+	@echo "... src/Light.o"
+	@echo "... src/Light.i"
+	@echo "... src/Light.s"
+	@echo "... src/Mesh.o"
+	@echo "... src/Mesh.i"
+	@echo "... src/Mesh.s"
+	@echo "... src/Model.o"
+	@echo "... src/Model.i"
+	@echo "... src/Model.s"
+	@echo "... src/Resource.o"
+	@echo "... src/Resource.i"
+	@echo "... src/Resource.s"
 	@echo "... src/Shader.o"
 	@echo "... src/Shader.i"
 	@echo "... src/Shader.s"
 	@echo "... src/Utils.o"
 	@echo "... src/Utils.i"
 	@echo "... src/Utils.s"
+	@echo "... src/Window.o"
+	@echo "... src/Window.i"
+	@echo "... src/Window.s"
+	@echo "... src/components/Transform.o"
+	@echo "... src/components/Transform.i"
+	@echo "... src/components/Transform.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

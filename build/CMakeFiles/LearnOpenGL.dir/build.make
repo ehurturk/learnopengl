@@ -193,9 +193,22 @@ CMakeFiles/LearnOpenGL.dir/src/thirdparty/stb_image.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/LearnOpenGL.dir/src/thirdparty/stb_image.c.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/thirdparty/stb_image.c -o CMakeFiles/LearnOpenGL.dir/src/thirdparty/stb_image.c.s
 
+CMakeFiles/LearnOpenGL.dir/src/Component.cpp.o: CMakeFiles/LearnOpenGL.dir/flags.make
+CMakeFiles/LearnOpenGL.dir/src/Component.cpp.o: ../src/Component.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/LearnOpenGL.dir/src/Component.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/LearnOpenGL.dir/src/Component.cpp.o -c /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Component.cpp
+
+CMakeFiles/LearnOpenGL.dir/src/Component.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/LearnOpenGL.dir/src/Component.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Component.cpp > CMakeFiles/LearnOpenGL.dir/src/Component.cpp.i
+
+CMakeFiles/LearnOpenGL.dir/src/Component.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/LearnOpenGL.dir/src/Component.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Component.cpp -o CMakeFiles/LearnOpenGL.dir/src/Component.cpp.s
+
 CMakeFiles/LearnOpenGL.dir/src/Engine.cpp.o: CMakeFiles/LearnOpenGL.dir/flags.make
 CMakeFiles/LearnOpenGL.dir/src/Engine.cpp.o: ../src/Engine.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/LearnOpenGL.dir/src/Engine.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/LearnOpenGL.dir/src/Engine.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/LearnOpenGL.dir/src/Engine.cpp.o -c /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Engine.cpp
 
 CMakeFiles/LearnOpenGL.dir/src/Engine.cpp.i: cmake_force
@@ -206,9 +219,87 @@ CMakeFiles/LearnOpenGL.dir/src/Engine.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/LearnOpenGL.dir/src/Engine.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Engine.cpp -o CMakeFiles/LearnOpenGL.dir/src/Engine.cpp.s
 
+CMakeFiles/LearnOpenGL.dir/src/Entity.cpp.o: CMakeFiles/LearnOpenGL.dir/flags.make
+CMakeFiles/LearnOpenGL.dir/src/Entity.cpp.o: ../src/Entity.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/LearnOpenGL.dir/src/Entity.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/LearnOpenGL.dir/src/Entity.cpp.o -c /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Entity.cpp
+
+CMakeFiles/LearnOpenGL.dir/src/Entity.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/LearnOpenGL.dir/src/Entity.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Entity.cpp > CMakeFiles/LearnOpenGL.dir/src/Entity.cpp.i
+
+CMakeFiles/LearnOpenGL.dir/src/Entity.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/LearnOpenGL.dir/src/Entity.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Entity.cpp -o CMakeFiles/LearnOpenGL.dir/src/Entity.cpp.s
+
+CMakeFiles/LearnOpenGL.dir/src/Input.cpp.o: CMakeFiles/LearnOpenGL.dir/flags.make
+CMakeFiles/LearnOpenGL.dir/src/Input.cpp.o: ../src/Input.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/LearnOpenGL.dir/src/Input.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/LearnOpenGL.dir/src/Input.cpp.o -c /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Input.cpp
+
+CMakeFiles/LearnOpenGL.dir/src/Input.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/LearnOpenGL.dir/src/Input.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Input.cpp > CMakeFiles/LearnOpenGL.dir/src/Input.cpp.i
+
+CMakeFiles/LearnOpenGL.dir/src/Input.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/LearnOpenGL.dir/src/Input.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Input.cpp -o CMakeFiles/LearnOpenGL.dir/src/Input.cpp.s
+
+CMakeFiles/LearnOpenGL.dir/src/Light.cpp.o: CMakeFiles/LearnOpenGL.dir/flags.make
+CMakeFiles/LearnOpenGL.dir/src/Light.cpp.o: ../src/Light.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/LearnOpenGL.dir/src/Light.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/LearnOpenGL.dir/src/Light.cpp.o -c /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Light.cpp
+
+CMakeFiles/LearnOpenGL.dir/src/Light.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/LearnOpenGL.dir/src/Light.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Light.cpp > CMakeFiles/LearnOpenGL.dir/src/Light.cpp.i
+
+CMakeFiles/LearnOpenGL.dir/src/Light.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/LearnOpenGL.dir/src/Light.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Light.cpp -o CMakeFiles/LearnOpenGL.dir/src/Light.cpp.s
+
+CMakeFiles/LearnOpenGL.dir/src/Mesh.cpp.o: CMakeFiles/LearnOpenGL.dir/flags.make
+CMakeFiles/LearnOpenGL.dir/src/Mesh.cpp.o: ../src/Mesh.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/LearnOpenGL.dir/src/Mesh.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/LearnOpenGL.dir/src/Mesh.cpp.o -c /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Mesh.cpp
+
+CMakeFiles/LearnOpenGL.dir/src/Mesh.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/LearnOpenGL.dir/src/Mesh.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Mesh.cpp > CMakeFiles/LearnOpenGL.dir/src/Mesh.cpp.i
+
+CMakeFiles/LearnOpenGL.dir/src/Mesh.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/LearnOpenGL.dir/src/Mesh.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Mesh.cpp -o CMakeFiles/LearnOpenGL.dir/src/Mesh.cpp.s
+
+CMakeFiles/LearnOpenGL.dir/src/Model.cpp.o: CMakeFiles/LearnOpenGL.dir/flags.make
+CMakeFiles/LearnOpenGL.dir/src/Model.cpp.o: ../src/Model.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/LearnOpenGL.dir/src/Model.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/LearnOpenGL.dir/src/Model.cpp.o -c /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Model.cpp
+
+CMakeFiles/LearnOpenGL.dir/src/Model.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/LearnOpenGL.dir/src/Model.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Model.cpp > CMakeFiles/LearnOpenGL.dir/src/Model.cpp.i
+
+CMakeFiles/LearnOpenGL.dir/src/Model.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/LearnOpenGL.dir/src/Model.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Model.cpp -o CMakeFiles/LearnOpenGL.dir/src/Model.cpp.s
+
+CMakeFiles/LearnOpenGL.dir/src/Resource.cpp.o: CMakeFiles/LearnOpenGL.dir/flags.make
+CMakeFiles/LearnOpenGL.dir/src/Resource.cpp.o: ../src/Resource.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/LearnOpenGL.dir/src/Resource.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/LearnOpenGL.dir/src/Resource.cpp.o -c /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Resource.cpp
+
+CMakeFiles/LearnOpenGL.dir/src/Resource.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/LearnOpenGL.dir/src/Resource.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Resource.cpp > CMakeFiles/LearnOpenGL.dir/src/Resource.cpp.i
+
+CMakeFiles/LearnOpenGL.dir/src/Resource.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/LearnOpenGL.dir/src/Resource.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Resource.cpp -o CMakeFiles/LearnOpenGL.dir/src/Resource.cpp.s
+
 CMakeFiles/LearnOpenGL.dir/src/Shader.cpp.o: CMakeFiles/LearnOpenGL.dir/flags.make
 CMakeFiles/LearnOpenGL.dir/src/Shader.cpp.o: ../src/Shader.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/LearnOpenGL.dir/src/Shader.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/LearnOpenGL.dir/src/Shader.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/LearnOpenGL.dir/src/Shader.cpp.o -c /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Shader.cpp
 
 CMakeFiles/LearnOpenGL.dir/src/Shader.cpp.i: cmake_force
@@ -221,7 +312,7 @@ CMakeFiles/LearnOpenGL.dir/src/Shader.cpp.s: cmake_force
 
 CMakeFiles/LearnOpenGL.dir/src/Utils.cpp.o: CMakeFiles/LearnOpenGL.dir/flags.make
 CMakeFiles/LearnOpenGL.dir/src/Utils.cpp.o: ../src/Utils.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/LearnOpenGL.dir/src/Utils.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/LearnOpenGL.dir/src/Utils.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/LearnOpenGL.dir/src/Utils.cpp.o -c /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Utils.cpp
 
 CMakeFiles/LearnOpenGL.dir/src/Utils.cpp.i: cmake_force
@@ -232,9 +323,35 @@ CMakeFiles/LearnOpenGL.dir/src/Utils.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/LearnOpenGL.dir/src/Utils.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Utils.cpp -o CMakeFiles/LearnOpenGL.dir/src/Utils.cpp.s
 
+CMakeFiles/LearnOpenGL.dir/src/Window.cpp.o: CMakeFiles/LearnOpenGL.dir/flags.make
+CMakeFiles/LearnOpenGL.dir/src/Window.cpp.o: ../src/Window.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/LearnOpenGL.dir/src/Window.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/LearnOpenGL.dir/src/Window.cpp.o -c /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Window.cpp
+
+CMakeFiles/LearnOpenGL.dir/src/Window.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/LearnOpenGL.dir/src/Window.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Window.cpp > CMakeFiles/LearnOpenGL.dir/src/Window.cpp.i
+
+CMakeFiles/LearnOpenGL.dir/src/Window.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/LearnOpenGL.dir/src/Window.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Window.cpp -o CMakeFiles/LearnOpenGL.dir/src/Window.cpp.s
+
+CMakeFiles/LearnOpenGL.dir/src/components/Transform.cpp.o: CMakeFiles/LearnOpenGL.dir/flags.make
+CMakeFiles/LearnOpenGL.dir/src/components/Transform.cpp.o: ../src/components/Transform.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/LearnOpenGL.dir/src/components/Transform.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/LearnOpenGL.dir/src/components/Transform.cpp.o -c /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/components/Transform.cpp
+
+CMakeFiles/LearnOpenGL.dir/src/components/Transform.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/LearnOpenGL.dir/src/components/Transform.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/components/Transform.cpp > CMakeFiles/LearnOpenGL.dir/src/components/Transform.cpp.i
+
+CMakeFiles/LearnOpenGL.dir/src/components/Transform.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/LearnOpenGL.dir/src/components/Transform.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/components/Transform.cpp -o CMakeFiles/LearnOpenGL.dir/src/components/Transform.cpp.s
+
 CMakeFiles/LearnOpenGL.dir/src/main.cpp.o: CMakeFiles/LearnOpenGL.dir/flags.make
 CMakeFiles/LearnOpenGL.dir/src/main.cpp.o: ../src/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/LearnOpenGL.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/LearnOpenGL.dir/src/main.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/LearnOpenGL.dir/src/main.cpp.o -c /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/main.cpp
 
 CMakeFiles/LearnOpenGL.dir/src/main.cpp.i: cmake_force
@@ -256,9 +373,18 @@ LearnOpenGL_OBJECTS = \
 "CMakeFiles/LearnOpenGL.dir/vendor/imgui/imgui_tables.cpp.o" \
 "CMakeFiles/LearnOpenGL.dir/vendor/imgui/imgui_widgets.cpp.o" \
 "CMakeFiles/LearnOpenGL.dir/src/thirdparty/stb_image.c.o" \
+"CMakeFiles/LearnOpenGL.dir/src/Component.cpp.o" \
 "CMakeFiles/LearnOpenGL.dir/src/Engine.cpp.o" \
+"CMakeFiles/LearnOpenGL.dir/src/Entity.cpp.o" \
+"CMakeFiles/LearnOpenGL.dir/src/Input.cpp.o" \
+"CMakeFiles/LearnOpenGL.dir/src/Light.cpp.o" \
+"CMakeFiles/LearnOpenGL.dir/src/Mesh.cpp.o" \
+"CMakeFiles/LearnOpenGL.dir/src/Model.cpp.o" \
+"CMakeFiles/LearnOpenGL.dir/src/Resource.cpp.o" \
 "CMakeFiles/LearnOpenGL.dir/src/Shader.cpp.o" \
 "CMakeFiles/LearnOpenGL.dir/src/Utils.cpp.o" \
+"CMakeFiles/LearnOpenGL.dir/src/Window.cpp.o" \
+"CMakeFiles/LearnOpenGL.dir/src/components/Transform.cpp.o" \
 "CMakeFiles/LearnOpenGL.dir/src/main.cpp.o"
 
 # External object files for target LearnOpenGL
@@ -273,14 +399,25 @@ LearnOpenGL: CMakeFiles/LearnOpenGL.dir/vendor/imgui/imgui_impl_opengl3.cpp.o
 LearnOpenGL: CMakeFiles/LearnOpenGL.dir/vendor/imgui/imgui_tables.cpp.o
 LearnOpenGL: CMakeFiles/LearnOpenGL.dir/vendor/imgui/imgui_widgets.cpp.o
 LearnOpenGL: CMakeFiles/LearnOpenGL.dir/src/thirdparty/stb_image.c.o
+LearnOpenGL: CMakeFiles/LearnOpenGL.dir/src/Component.cpp.o
 LearnOpenGL: CMakeFiles/LearnOpenGL.dir/src/Engine.cpp.o
+LearnOpenGL: CMakeFiles/LearnOpenGL.dir/src/Entity.cpp.o
+LearnOpenGL: CMakeFiles/LearnOpenGL.dir/src/Input.cpp.o
+LearnOpenGL: CMakeFiles/LearnOpenGL.dir/src/Light.cpp.o
+LearnOpenGL: CMakeFiles/LearnOpenGL.dir/src/Mesh.cpp.o
+LearnOpenGL: CMakeFiles/LearnOpenGL.dir/src/Model.cpp.o
+LearnOpenGL: CMakeFiles/LearnOpenGL.dir/src/Resource.cpp.o
 LearnOpenGL: CMakeFiles/LearnOpenGL.dir/src/Shader.cpp.o
 LearnOpenGL: CMakeFiles/LearnOpenGL.dir/src/Utils.cpp.o
+LearnOpenGL: CMakeFiles/LearnOpenGL.dir/src/Window.cpp.o
+LearnOpenGL: CMakeFiles/LearnOpenGL.dir/src/components/Transform.cpp.o
 LearnOpenGL: CMakeFiles/LearnOpenGL.dir/src/main.cpp.o
 LearnOpenGL: CMakeFiles/LearnOpenGL.dir/build.make
 LearnOpenGL: /usr/local/lib/libglfw.3.3.dylib
+LearnOpenGL: /usr/local/lib/libassimp.5.2.0.dylib
+LearnOpenGL: /Library/Developer/CommandLineTools/SDKs/MacOSX11.sdk/usr/lib/libz.tbd
 LearnOpenGL: CMakeFiles/LearnOpenGL.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX executable LearnOpenGL"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Linking CXX executable LearnOpenGL"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/LearnOpenGL.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

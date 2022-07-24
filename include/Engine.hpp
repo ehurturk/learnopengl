@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <memory>
 #include <array>
@@ -13,21 +15,26 @@
 #include "thirdparty/stb_image.h"
 
 #include "Shader.hpp"
+#include "Resource.hpp"
+#include "Window.hpp"
 #include "Utils.hpp"
+#include "common.h"
 
 struct EngineConfig {
-    const char *title;
-    int width;
-    int height;
+    const std::string &title;
+    ui32 width;
+    ui32 height;
 };
 
 class Engine {
 public:
-    Engine(const EngineConfig config);
+    Engine(const std::string &title, ui32 width, ui32 height);
     ~Engine();
 
+    void test();
     void start();
 
 private:
     EngineConfig cfg;
+    std::unique_ptr<Window> m_Window;
 };

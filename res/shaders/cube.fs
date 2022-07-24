@@ -7,9 +7,9 @@ in vec2 TexCoords;
 out vec4 FragColor;
 
 struct Material {
-    sampler2D diffuse;
-    sampler2D specular;
-    sampler2D emission;
+    sampler2D texture_diffuse1;
+    sampler2D texture_specular1;
+    sampler2D texture_emission1;
     float shininess;
 };
 
@@ -51,9 +51,9 @@ vec3 calculate_directional_light(DirectionalLight light, vec3 normal, vec3 viewD
     float amb = 1.0f;
 
 
-    vec3 ambient  = amb * light.ambient * texture(material.diffuse, TexCoords).rgb;
-    vec3 diffuse  = diff * light.diffuse * texture(material.diffuse, TexCoords).rgb;
-    vec3 specular = spec * light.specular * texture(material.specular, TexCoords).rgb;
+    vec3 ambient  = amb * light.ambient * texture(material.texture_diffuse1, TexCoords).rgb;
+    vec3 diffuse  = diff * light.diffuse * texture(material.texture_diffuse1, TexCoords).rgb;
+    vec3 specular = spec * light.specular * texture(material.texture_specular1, TexCoords).rgb;
 
     return ambient + diffuse + specular;
 }
@@ -69,9 +69,9 @@ vec3 calculate_point_light(PointLight light, vec3 normal, vec3 fragPos, vec3 vie
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     float amb = 1.0;
 
-    vec3 ambient = amb * light.ambient * texture(material.diffuse, TexCoords).rgb; // ambiant strength (pixel value) * ambient color * diffuse map
-    vec3 diffuse = diff * light.diffuse * texture(material.diffuse, TexCoords).rgb; // diffuse strength (pixel value) * diffuse color * diffuse map
-    vec3 specular = spec * light.specular * texture(material.specular, TexCoords).rgb; // specular strength (pixel value) * specular color * specular map
+    vec3 ambient = amb * light.ambient * texture(material.texture_diffuse1, TexCoords).rgb; // ambiant strength (pixel value) * ambient color * diffuse map
+    vec3 diffuse = diff * light.diffuse * texture(material.texture_diffuse1, TexCoords).rgb; // diffuse strength (pixel value) * diffuse color * diffuse map
+    vec3 specular = spec * light.specular * texture(material.texture_specular1, TexCoords).rgb; // specular strength (pixel value) * specular color * specular map
 
     return (ambient + diffuse + specular) * attenuation;
 
@@ -89,7 +89,7 @@ void main() {
         color += calculate_point_light(point_lights[i], norm, FragPos, viewDir);
     
     // emission
-    vec3 emission = texture(material.emission, TexCoords).rgb;
+    vec3 emission = texture(material.texture_emission1, TexCoords).rgb;
     // color += emission;
 
     FragColor = vec4(color, 1.0);

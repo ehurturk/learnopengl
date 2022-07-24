@@ -1,56 +1,56 @@
 #include "Shader.hpp"
+#include "common.h"
 #include "glm/gtc/type_ptr.hpp"
 
-Shader::Shader(const char *vertexPath, const char *fragmentPath) {
-    // 1. retrieve the vertex/fragment source code from filePath
-    std::string vertexCode;
-    std::string fragmentCode;
-    std::ifstream vShaderFile;
-    std::ifstream fShaderFile;
-    // ensure ifstream objects can throw exceptions:
-    vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+Shader::Shader() {
+    // shader Program
+    ID = glCreateProgram();
+}
+
+Shader::~Shader() {
+    glDeleteProgram(ID);
+}
+
+void Shader::load_shader(const char *path, ShaderType type) {
+    std::string code_;
+    std::ifstream file;
+    file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try {
-        // open files
-        vShaderFile.open(vertexPath);
-        fShaderFile.open(fragmentPath);
-        std::stringstream vShaderStream, fShaderStream;
-        // read file's buffer contents into streams
-        vShaderStream << vShaderFile.rdbuf();
-        fShaderStream << fShaderFile.rdbuf();
-        // close file handlers
-        vShaderFile.close();
-        fShaderFile.close();
-        // convert stream into string
-        vertexCode   = vShaderStream.str();
-        fragmentCode = fShaderStream.str();
+        file.open(path);
+        std::stringstream shader_stream;
+        shader_stream << file.rdbuf();
+        file.close();
+        code_ = shader_stream.str();
     } catch (std::ifstream::failure &e) {
         std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ: " << e.what() << std::endl;
     }
-    const char *vShaderCode = vertexCode.c_str();
-    const char *fShaderCode = fragmentCode.c_str();
-    // 2. compile shaders
-    unsigned int vertex, fragment;
-    // vertex shader
-    vertex = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex, 1, &vShaderCode, NULL);
-    glCompileShader(vertex);
-    checkCompileErrors(vertex, "VERTEX");
-    // fragment Shader
-    fragment = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment, 1, &fShaderCode, NULL);
-    glCompileShader(fragment);
-    checkCompileErrors(fragment, "FRAGMENT");
-    // shader Program
-    ID = glCreateProgram();
-    glAttachShader(ID, vertex);
-    glAttachShader(ID, fragment);
+    const char *code = code_.c_str();
+    ui32 shader_id;
+    switch (type) {
+        case ShaderType::VERTEX_SHADER:
+            shader_id = glCreateShader(GL_VERTEX_SHADER);
+            glShaderSource(shader_id, 1, &code, NULL);
+            glCompileShader(shader_id);
+            checkCompileErrors(shader_id, "VERTEX");
+            break;
+        case ShaderType::FRAGMENT_SHADER:
+            shader_id = glCreateShader(GL_FRAGMENT_SHADER);
+            glShaderSource(shader_id, 1, &code, NULL);
+            glCompileShader(shader_id);
+            checkCompileErrors(shader_id, "FRAGMENT");
+            break;
+        default:
+            std::cout << "ERROR: Shader type not supported yet (ERR_INFO:PATH:" << path << ")." << std::endl;
+            break;
+    }
+
+    glAttachShader(ID, shader_id);
     glLinkProgram(ID);
     checkCompileErrors(ID, "PROGRAM");
-    // delete the shaders as they're linked into our program now and no longer necessary
-    glDeleteShader(vertex);
-    glDeleteShader(fragment);
+    // delete the shader as it is linked into the program now and no longer necessary
+    glDeleteShader(shader_id);
 }
+
 // activate the shader
 // ------------------------------------------------------------------------
 void Shader::use() {

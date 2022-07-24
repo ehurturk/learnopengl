@@ -10,6 +10,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include "Model.hpp"
 
 // settings
 const unsigned int SCR_WIDTH  = 800;
@@ -32,55 +33,29 @@ bool first_time_mouse_enter = true;
 bool my_tool_active         = false;
 
 
-Engine::Engine(const EngineConfig config) : cfg(config) {}
+Engine::Engine(const std::string &title, ui32 width, ui32 height) : cfg((EngineConfig){.title = title, .width = width, .height = height}) {}
 
 Engine::~Engine() {}
 
+static void processInput(GLFWwindow *window);
+static void key_input_callback(GLFWwindow *window, int, int, int, int);
+static void cursor_pos_callback(GLFWwindow *window, double x, double y);
 static void framebuffer_size_callback(GLFWwindow *window, int width,
                                       int height);
-static void processInput(GLFWwindow *window);
-static void cursor_pos_callback(GLFWwindow *window, double x, double y);
 unsigned int load_texture(const char *path);
 
 glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) SCR_WIDTH / SCR_HEIGHT, 0.1f, 100.0f);
 
 void Engine::start() {
-    // glfw: initialize and configure
-    // ------------------------------
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    m_Window = std::make_unique<Window>(cfg.title, cfg.width, cfg.height);
+    m_Window->bind_func<Window::KeyInputCallbackFunc>(key_input_callback);
+    m_Window->bind_func<Window::MouseInputCallbackFunc>(cursor_pos_callback);
+    m_Window->bind_func<Window::FramebufferSizeCallbackFunc>(framebuffer_size_callback);
+    m_Window->initialize();
+    GLFWwindow *window = m_Window->get_raw_window();
 
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-
-    // glfw window creation
-    // --------------------
-    GLFWwindow *window =
-            glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-    if (window == NULL) {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return;
-    }
-    glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, cursor_pos_callback);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-
-    // glad: load all OpenGL function pointers
-    // ---------------------------------------
-    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        return;
-    }
-
-    glEnable(GL_DEPTH_TEST);
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
+    //     // set up vertex data (and buffer(s)) and configure vertex attributes
+    //     // ------------------------------------------------------------------
     float vertices[] = {
             // positions          // normals           // texture coords
             -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
@@ -156,25 +131,29 @@ void Engine::start() {
 #pragma endregion
 
 
-    // render loop
-    // -----------
-    Shader cubeShader("../res/shaders/cube.vs", "../res/shaders/cube.fs");
-    Shader lightShader("../res/shaders/light.vs", "../res/shaders/light.fs");
+    std::cout << "beginning...\n";
 
-    glm::vec3 lightPos(0.0f, 0.0f, 2.0f);
+    Shader backpack_shader;
+    backpack_shader.load_shader("../res/shaders/model.vs", Shader::ShaderType::VERTEX_SHADER);
+    backpack_shader.load_shader("../res/shaders/model.fs", Shader::ShaderType::FRAGMENT_SHADER);
 
-    unsigned int diffuse_map  = load_texture("../res/textures/diffuse_map.png");
-    unsigned int specular_map = load_texture("../res/textures/specular_map.png");
-    unsigned int emission_map = load_texture("../res/textures/emission_map.png");
+    Model backpack("../res/models/backpack/backpack.obj");
+    std::cout << "done\n";
+
+    Shader cubeShader;
+    cubeShader.load_shader("../res/shaders/cube.vs", Shader::ShaderType::VERTEX_SHADER);
+    cubeShader.load_shader("../res/shaders/cube.fs", Shader::ShaderType::FRAGMENT_SHADER);
+    Shader lightShader;
+    lightShader.load_shader("../res/shaders/light.vs", Shader::ShaderType::VERTEX_SHADER);
+    lightShader.load_shader("../res/shaders/light.fs", Shader::ShaderType::FRAGMENT_SHADER);
+
+    Texture diffuse_map  = ResourceManager::load_ogl_texture_from_path("../res/textures/diffuse_map.png");
+    Texture specular_map = ResourceManager::load_ogl_texture_from_path("../res/textures/specular_map.png", Texture::TextureType::SPECULAR);
+    Texture emission_map = ResourceManager::load_ogl_texture_from_path("../res/textures/emission_map.png", Texture::TextureType::EMISSION);
     cubeShader.use();
-    cubeShader.setInt("material.diffuse", 0);
-    cubeShader.setInt("material.specular", 1);
-    cubeShader.setInt("material.emission", 2);
-
-    // cube's model info
-    glm::vec3 cube_position(0.0f, 0.0f, 0.0f);
-    glm::vec3 cube_rotation(0.0f, 0.0f, 0.0f);
-    glm::vec3 cube_scale(1.0f, 1.0f, 1.0f);
+    cubeShader.setInt("material.texture_diffuse1", 0);
+    cubeShader.setInt("material.texture_specular1", 1);
+    cubeShader.setInt("material.texture_emission1", 2);
 
     glm::vec3 colorRed    = glm::vec3(1.0f, 0.0f, 0.0f);
     glm::vec3 colorGreen  = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -182,6 +161,12 @@ void Engine::start() {
     glm::vec3 colorYellow = glm::vec3(1.0f, 1.0f, 0.0f);
 
     glm::vec3 pointLightColors[] = {colorRed, colorGreen, colorBlue, colorYellow};
+
+    glm::vec3 pointLightPositions[] = {
+            glm::vec3(0.7f, 0.2f, 2.0f),
+            glm::vec3(2.3f, -3.3f, -4.0f),
+            glm::vec3(-4.0f, 2.0f, -12.0f),
+            glm::vec3(0.0f, 0.0f, -3.0f)};
 
     glm::vec3 cubePositions[] = {
             glm::vec3(0.0f, 0.0f, 0.0f),
@@ -195,34 +180,10 @@ void Engine::start() {
             glm::vec3(1.5f, 0.2f, -1.5f),
             glm::vec3(-1.3f, 1.0f, -1.5f)};
 
-    glm::vec3 pointLightPositions[] = {
-            glm::vec3(0.7f, 0.2f, 2.0f),
-            glm::vec3(2.3f, -3.3f, -4.0f),
-            glm::vec3(-4.0f, 2.0f, -12.0f),
-            glm::vec3(0.0f, 0.0f, -3.0f)};
-
-
-    IMGUI_CHECKVERSION();
-
-    ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-    (void) io;
-    ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
-
-    ImFont *font = io.Fonts->AddFontFromFileTTF("../res/fonts/Roboto-Medium.ttf", 16.0f);
-    if (font == NULL)
-        return;
-
-
-    while (!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(m_Window->get_raw_window())) {
         // input
         // -----
-
-        glfwPollEvents();
+        m_Window->update();
         processInput(window);
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -322,13 +283,13 @@ void Engine::start() {
         cubeShader.setMat4("projection", projection);
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, diffuse_map);
+        glBindTexture(GL_TEXTURE_2D, diffuse_map.id);
 
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, specular_map);
+        glBindTexture(GL_TEXTURE_2D, specular_map.id);
 
         glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, emission_map);
+        glBindTexture(GL_TEXTURE_2D, emission_map.id);
 
         glBindVertexArray(VAO);
 
@@ -361,39 +322,23 @@ void Engine::start() {
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
+        backpack_shader.use();
+        glm::mat4 model = glm::mat4(1.0f);
+        model           = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+        model           = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+        backpack_shader.setMat4("model", model);
+        backpack_shader.setMat4("view", view);
+        backpack_shader.setMat4("projection", projection);
+        backpack.draw(backpack_shader);
 
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-            GLFWwindow *backup_current_context = glfwGetCurrentContext();
-            ImGui::UpdatePlatformWindows();
-            ImGui::RenderPlatformWindowsDefault();
-            glfwMakeContextCurrent(backup_current_context);
-        }
-
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved
-        // etc.)
-        // -------------------------------------------------------------------------------
-        glfwSwapBuffers(window);
+        m_Window->post_update();
     }
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-    // optional: de-allocate all resources once they've outlived their purpose:
-    // ------------------------------------------------------------------------
-    glDeleteTextures(1, &diffuse_map);
-    glDeleteTextures(1, &specular_map);
-    glDeleteTextures(1, &emission_map);
-    glDeleteTextures(1, &emission_map);
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteVertexArrays(1, &lightVAO);
-    glDeleteBuffers(1, &VBO);
 
-    // glfw: terminate, clearing all previously allocated GLFW resources.
-    // ------------------------------------------------------------------
-    glfwTerminate();
+    // TODO: Window automatically destructs itself here, so glfwTerminate() occurs here. NOTE!!
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this
@@ -419,6 +364,9 @@ static void processInput(GLFWwindow *window) {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
         my_tool_active = true;
+}
+
+static void key_input_callback(GLFWwindow *window, int key, int scan_code, int action, int mods) {
 }
 
 static void cursor_pos_callback(GLFWwindow *window, double x, double y) {
@@ -464,37 +412,4 @@ static void framebuffer_size_callback(GLFWwindow *window, int width,
     // and height will be significantly larger than specified on retina displays.
     projection = glm::perspective(glm::radians(45.0f), (float) width / (float) height, 0.1f, 100.0f);
     glViewport(0, 0, width, height);
-}
-
-unsigned int load_texture(const char *path) {
-    unsigned int textureID;
-    glGenTextures(1, &textureID);
-
-    int width, height, nrComponents;
-    unsigned char *data = stbi_load(path, &width, &height, &nrComponents, 0);
-    if (data) {
-        GLenum format;
-        if (nrComponents == 1)
-            format = GL_RED;
-        else if (nrComponents == 3)
-            format = GL_RGB;
-        else if (nrComponents == 4)
-            format = GL_RGBA;
-
-        glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        stbi_image_free(data);
-    } else {
-        std::cout << "Texture failed to load at path: " << path << std::endl;
-        stbi_image_free(data);
-    }
-
-    return textureID;
 }

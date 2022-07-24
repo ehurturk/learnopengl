@@ -35,6 +35,10 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/local/Cellar/cmake/3.19.5/share/cmake/Modules/Platform/Darwin-Initialize.cmake"
   "/usr/local/Cellar/cmake/3.19.5/share/cmake/Modules/Platform/Darwin.cmake"
   "/usr/local/Cellar/cmake/3.19.5/share/cmake/Modules/Platform/UnixPaths.cmake"
+  "/usr/local/lib/cmake/assimp-5.2/ASSIMPConfig.cmake"
+  "/usr/local/lib/cmake/assimp-5.2/ASSIMPConfigVersion.cmake"
+  "/usr/local/lib/cmake/assimp-5.2/assimpTargets-release.cmake"
+  "/usr/local/lib/cmake/assimp-5.2/assimpTargets.cmake"
   )
 
 # The corresponding makefile is:

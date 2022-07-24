@@ -10,13 +10,20 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include "Resource.hpp"
 
 class Shader {
 public:
+    enum ShaderType {
+        VERTEX_SHADER,
+        FRAGMENT_SHADER
+    };
     unsigned int ID;
     // constructor generates the shader on the fly
     // ------------------------------------------------------------------------
-    Shader(const char *vertexPath, const char *fragmentPath);
+    Shader();
+    ~Shader();
+    void load_shader(const char *path, ShaderType type);
     // activate the shader
     // ------------------------------------------------------------------------
     void use();
