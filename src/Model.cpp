@@ -8,7 +8,11 @@ Model::Model(const std::string &path) {
     load_model(path);
 }
 
-Model::~Model() {}
+Model::~Model() {
+    for (const auto &mesh : meshes) {
+        mesh.destroy();
+    }
+}
 
 void Model::draw(const Shader &shader) {
     for (const auto &mesh : meshes)

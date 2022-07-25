@@ -5,11 +5,11 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<ui32> &indices
 }
 
 Mesh::~Mesh() {
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
-    glDeleteBuffers(1, &ebo);
-    for (auto &texture : textures)
-        glDeleteTextures(1, &texture.id);
+    // glDeleteVertexArrays(1, &vao);
+    // glDeleteBuffers(1, &vbo);
+    // glDeleteBuffers(1, &ebo);
+    // for (auto &texture : textures)
+    //     glDeleteTextures(1, &texture.id);
 }
 
 void Mesh::setup_mesh() {
@@ -62,4 +62,12 @@ void Mesh::draw(const Shader &shader) const {
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
     glActiveTexture(GL_TEXTURE0);
+}
+
+void Mesh::destroy() const {
+    glDeleteVertexArrays(1, &vao);
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &ebo);
+    for (const auto &texture : textures)
+        glDeleteTextures(1, &texture.id);
 }

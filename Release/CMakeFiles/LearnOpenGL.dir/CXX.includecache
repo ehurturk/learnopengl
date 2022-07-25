@@ -1208,14 +1208,6 @@ epsilon.inl
 matrix_transform.inl
 ../vendor/glm/gtc/matrix_transform.inl
 
-../vendor/glm/gtc/matrix_transform.inl
-../geometric.hpp
-../vendor/glm/geometric.hpp
-../trigonometric.hpp
-../vendor/glm/trigonometric.hpp
-../matrix.hpp
-../vendor/glm/matrix.hpp
-
 ../vendor/glm/gtc/quaternion.hpp
 ../gtc/constants.hpp
 ../vendor/glm/gtc/constants.hpp
@@ -1646,16 +1638,6 @@ imgui_impl_opengl3.h
 Model.hpp
 /Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Model.hpp
 
-/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Mesh.cpp
-Mesh.hpp
-/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Mesh.hpp
-
-/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Model.cpp
-Model.hpp
-/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/src/Model.hpp
-string
--
-
 /usr/local/include/assimp/Compiler/poppack1.h
 
 /usr/local/include/assimp/Compiler/pstdint.h
@@ -1792,12 +1774,6 @@ assimp/types.h
 
 /usr/local/include/assimp/quaternion.h
 assimp/defs.h
--
-
-/usr/local/include/assimp/quaternion.inl
-assimp/quaternion.h
--
-cmath
 -
 
 /usr/local/include/assimp/scene.h

@@ -100,75 +100,54 @@ void Engine::start() {
             -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
             -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f};
 
-#pragma region CUBE
-    unsigned int VBO, VAO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) 0);
-    glEnableVertexAttribArray(0);
-    // normal data
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) (3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-    // texture data
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) (6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-#pragma endregion
-
 #pragma region LIGHT 1
     unsigned int lightVAO;
+    unsigned int VBO;
     glGenVertexArrays(1, &lightVAO);
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     glBindVertexArray(lightVAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) 0);
     glEnableVertexAttribArray(0);
 #pragma endregion
 
-
-    std::cout << "beginning...\n";
-
     Shader backpack_shader;
-    backpack_shader.load_shader("../res/shaders/model.vs", Shader::ShaderType::VERTEX_SHADER);
-    backpack_shader.load_shader("../res/shaders/model.fs", Shader::ShaderType::FRAGMENT_SHADER);
+    backpack_shader.load_shader("../res/shaders/cube.vs", Shader::ShaderType::VERTEX_SHADER);
+    backpack_shader.load_shader("../res/shaders/cube.fs", Shader::ShaderType::FRAGMENT_SHADER);
 
     Model backpack("../res/models/backpack/backpack.obj");
-    std::cout << "done\n";
 
-    Shader cubeShader;
-    cubeShader.load_shader("../res/shaders/cube.vs", Shader::ShaderType::VERTEX_SHADER);
-    cubeShader.load_shader("../res/shaders/cube.fs", Shader::ShaderType::FRAGMENT_SHADER);
+    Shader sponza_shader;
+    sponza_shader.load_shader("../res/shaders/cube.vs", Shader::ShaderType::VERTEX_SHADER);
+    sponza_shader.load_shader("../res/shaders/cube.fs", Shader::ShaderType::FRAGMENT_SHADER);
+
+    stbi_set_flip_vertically_on_load(false);
+    Model sponza("../res/models/sponza/sponza.obj");
+    stbi_set_flip_vertically_on_load(true);
+
     Shader lightShader;
     lightShader.load_shader("../res/shaders/light.vs", Shader::ShaderType::VERTEX_SHADER);
     lightShader.load_shader("../res/shaders/light.fs", Shader::ShaderType::FRAGMENT_SHADER);
-
-    Texture diffuse_map  = ResourceManager::load_ogl_texture_from_path("../res/textures/diffuse_map.png");
-    Texture specular_map = ResourceManager::load_ogl_texture_from_path("../res/textures/specular_map.png", Texture::TextureType::SPECULAR);
-    Texture emission_map = ResourceManager::load_ogl_texture_from_path("../res/textures/emission_map.png", Texture::TextureType::EMISSION);
-    cubeShader.use();
-    cubeShader.setInt("material.texture_diffuse1", 0);
-    cubeShader.setInt("material.texture_specular1", 1);
-    cubeShader.setInt("material.texture_emission1", 2);
 
     glm::vec3 colorRed    = glm::vec3(1.0f, 0.0f, 0.0f);
     glm::vec3 colorGreen  = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::vec3 colorBlue   = glm::vec3(0.0f, 0.0f, 1.0f);
     glm::vec3 colorYellow = glm::vec3(1.0f, 1.0f, 0.0f);
 
-    glm::vec3 pointLightColors[] = {colorRed, colorGreen, colorBlue, colorYellow};
+    glm::vec3 pointLightColors[] = {colorRed, colorGreen, colorBlue, colorYellow, colorYellow, colorGreen, colorBlue};
 
     glm::vec3 pointLightPositions[] = {
             glm::vec3(0.7f, 0.2f, 2.0f),
             glm::vec3(2.3f, -3.3f, -4.0f),
             glm::vec3(-4.0f, 2.0f, -12.0f),
-            glm::vec3(0.0f, 0.0f, -3.0f)};
+            glm::vec3(0.0f, 0.0f, -3.0f),
+            glm::vec3(13.0f, 0.0f, 20.0f),
+            glm::vec3(20.0f, 0.0f, 20.0f),
+            glm::vec3(27.0f, 0.0f, 20.0f)};
 
-    glm::vec3 cubePositions[] = {
+    glm::vec3 backpack_positions[] = {
             glm::vec3(0.0f, 0.0f, 0.0f),
             glm::vec3(2.0f, 5.0f, -15.0f),
             glm::vec3(-1.5f, -2.2f, -2.5f),
@@ -189,6 +168,8 @@ void Engine::start() {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+
+        // std::cout << "pos: (" << camPos.x << ", " << camPos.y << ", " << camPos.z << ")" << std::endl;
 
         float cf = glfwGetTime();
 
@@ -226,7 +207,7 @@ void Engine::start() {
 
         // render
         // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -246,19 +227,19 @@ void Engine::start() {
 
         view = glm::lookAt(camPos, camFront + camPos, up);// view matrix, applied to the camera (-3.0f unit backwards)
 
-        cubeShader.use();
+        sponza_shader.use();
 
-        cubeShader.setVec3("cam_pos", camPos);
-        cubeShader.setFloat("material.shininess", 32.0f);
+        sponza_shader.setVec3("cam_pos", camPos);
+        sponza_shader.setFloat("material.shininess", 32.0f);
 
         // Directional light settings
-        cubeShader.setVec3("directional_light.direction", -0.2f, -1.0f, -0.3f);
-        cubeShader.setVec3("directional_light.ambient", 0.05f, 0.05f, 0.05f);
-        cubeShader.setVec3("directional_light.diffuse", 0.4f, 0.4f, 0.4f);
-        cubeShader.setVec3("directional_light.specular", 1.0f, 1.0f, 1.0f);
+        sponza_shader.setVec3("directional_light.direction", -0.2f, -1.0f, -0.3f);
+        sponza_shader.setVec3("directional_light.ambient", 0.05f, 0.05f, 0.05f);
+        sponza_shader.setVec3("directional_light.diffuse", 0.4f, 0.4f, 0.4f);
+        sponza_shader.setVec3("directional_light.specular", 1.0f, 1.0f, 1.0f);
 
         // Point light settings
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < sizeof(pointLightPositions) / sizeof(pointLightPositions[0]); i++) {
             std::string pos      = "point_lights[" + std::to_string(i) + "].position";
             std::string am       = "point_lights[" + std::to_string(i) + "].ambient";
             std::string diff     = "point_lights[" + std::to_string(i) + "].diffuse";
@@ -267,47 +248,77 @@ void Engine::start() {
             std::string linear   = "point_lights[" + std::to_string(i) + "].linear";
             std::string quad     = "point_lights[" + std::to_string(i) + "].quadratic";
 
-            cubeShader.setVec3(pos.c_str(), pointLightPositions[i]);
-#define AMBIENT_INTENSITY 0.3f
-            cubeShader.setVec3(am.c_str(), pointLightColors[i].r * AMBIENT_INTENSITY, pointLightColors[i].g * AMBIENT_INTENSITY, pointLightColors[i].b * AMBIENT_INTENSITY);
-#undef AMBIENT_INTENSITY
-            cubeShader.setVec3(diff.c_str(), pointLightColors[i]);
-            cubeShader.setVec3(spec.c_str(), pointLightColors[i]);
-            cubeShader.setFloat(constant.c_str(), 1.0f);
-            cubeShader.setFloat(linear.c_str(), 0.09f);
-            cubeShader.setFloat(quad.c_str(), 0.032f);
+            constexpr float AMBIENT_INTENSITY = 0.1f;
+            sponza_shader.setVec3(pos.c_str(), pointLightPositions[i]);
+            sponza_shader.setVec3(am.c_str(), pointLightColors[i].r * AMBIENT_INTENSITY, pointLightColors[i].g * AMBIENT_INTENSITY, pointLightColors[i].b * AMBIENT_INTENSITY);
+            sponza_shader.setVec3(diff.c_str(), pointLightColors[i]);
+            sponza_shader.setVec3(spec.c_str(), pointLightColors[i]);
+            sponza_shader.setFloat(constant.c_str(), 1.0f);
+            sponza_shader.setFloat(linear.c_str(), 0.09f);
+            sponza_shader.setFloat(quad.c_str(), 0.032f);
         }
 
         // cubeShader.setMat4("model", model); // (as already set in the loop)
-        cubeShader.setMat4("view", view);
-        cubeShader.setMat4("projection", projection);
+        sponza_shader.setMat4("view", view);
+        sponza_shader.setMat4("projection", projection);
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, diffuse_map.id);
+        glm::mat4 model = glm::mat4(1.0f);
+        model           = glm::translate(model, glm::vec3(20, 0, 20));
+        model           = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
+        sponza_shader.setMat4("model", model);
+        sponza.draw(sponza_shader);
 
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, specular_map.id);
+        backpack_shader.use();
 
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, emission_map.id);
+        backpack_shader.setVec3("cam_pos", camPos);
+        backpack_shader.setFloat("material.shininess", 32.0f);
 
-        glBindVertexArray(VAO);
+        // Directional light settings
+        backpack_shader.setVec3("directional_light.direction", -0.2f, -1.0f, -0.3f);
+        backpack_shader.setVec3("directional_light.ambient", 0.05f, 0.05f, 0.05f);
+        backpack_shader.setVec3("directional_light.diffuse", 0.4f, 0.4f, 0.4f);
+        backpack_shader.setVec3("directional_light.specular", 1.0f, 1.0f, 1.0f);
+
+        // Point light settings
+        for (int i = 0; i < sizeof(pointLightPositions) / sizeof(pointLightPositions[0]); i++) {
+            std::string pos      = "point_lights[" + std::to_string(i) + "].position";
+            std::string am       = "point_lights[" + std::to_string(i) + "].ambient";
+            std::string diff     = "point_lights[" + std::to_string(i) + "].diffuse";
+            std::string spec     = "point_lights[" + std::to_string(i) + "].specular";
+            std::string constant = "point_lights[" + std::to_string(i) + "].constant";
+            std::string linear   = "point_lights[" + std::to_string(i) + "].linear";
+            std::string quad     = "point_lights[" + std::to_string(i) + "].quadratic";
+
+            constexpr float AMBIENT_INTENSITY = 0.1f;
+            backpack_shader.setVec3(pos.c_str(), pointLightPositions[i]);
+            backpack_shader.setVec3(am.c_str(), pointLightColors[i].r * AMBIENT_INTENSITY, pointLightColors[i].g * AMBIENT_INTENSITY, pointLightColors[i].b * AMBIENT_INTENSITY);
+            backpack_shader.setVec3(diff.c_str(), pointLightColors[i]);
+            backpack_shader.setVec3(spec.c_str(), pointLightColors[i]);
+            backpack_shader.setFloat(constant.c_str(), 1.0f);
+            backpack_shader.setFloat(linear.c_str(), 0.007f);
+            backpack_shader.setFloat(quad.c_str(), 0.002f);
+        }
+
+        // cubeShader.setMat4("model", model); // (as already set in the loop)
+        backpack_shader.setMat4("view", view);
+        backpack_shader.setMat4("projection", projection);
 
         for (unsigned int i = 0; i < 10; i++) {
             // calculate the model matrix for each object and pass it to shader before drawing
             glm::mat4 model = glm::mat4(1.0f);
-            model           = glm::translate(model, cubePositions[i]);
+            model           = glm::translate(model, backpack_positions[i]);
             float angle     = 20.0f * i;
             model           = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            cubeShader.setMat4("model", model);
-            cubeShader.setMat3("model_corrected", glm::mat3(glm::transpose(glm::inverse(model))));
+            model           = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+            backpack_shader.setMat4("model", model);
+            backpack_shader.setMat3("model_corrected", glm::mat3(glm::transpose(glm::inverse(model))));
 
-            glDrawArrays(GL_TRIANGLES, 0, 36);
+            backpack.draw(backpack_shader);
         }
 
-        // 4 Point Lights
+        // // 4 Point Lights
         lightShader.use();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < sizeof(pointLightPositions) / sizeof(pointLightPositions[0]); i++) {
             glm::mat4 model = glm::mat4(1.0f);
 
             model = glm::translate(model, pointLightPositions[i]);
@@ -321,15 +332,6 @@ void Engine::start() {
             glBindVertexArray(lightVAO);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
-
-        backpack_shader.use();
-        glm::mat4 model = glm::mat4(1.0f);
-        model           = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-        model           = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-        backpack_shader.setMat4("model", model);
-        backpack_shader.setMat4("view", view);
-        backpack_shader.setMat4("projection", projection);
-        backpack.draw(backpack_shader);
 
         m_Window->post_update();
     }

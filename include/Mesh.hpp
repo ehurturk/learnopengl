@@ -21,6 +21,7 @@ public:
     Mesh(const std::vector<Vertex> &vertices, const std::vector<ui32> &indices, const std::vector<Texture> &textures);
     ~Mesh();
     void draw(const Shader &shader) const;
+    void destroy() const;
 
 private:
     ui32 vao, vbo, ebo;
