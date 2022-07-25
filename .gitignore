@@ -1,4 +1,6 @@
 goal.cc
 .cache
 .ccls-cache
+Release
+Debug
 TODO.md

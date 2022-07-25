@@ -1,3 +1,0 @@
-/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/Debug/CMakeFiles/rebuild_cache.dir
-/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/Debug/CMakeFiles/edit_cache.dir
-/Users/emirhurturk/Dev/Projects/OpenGL/learnopengl/Debug/CMakeFiles/LearnOpenGL.dir
