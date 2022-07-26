@@ -35,6 +35,18 @@ Texture ResourceManager::load_ogl_texture_from_path(const std::string &path, con
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     stbi_image_free(res.data);
 
+    switch (type) {
+        case Texture::TextureType::DIFFUSE:
+            tex.type = "texture_diffuse";
+            break;
+        case Texture::TextureType::SPECULAR:
+            tex.type = "texture_specular";
+            break;
+        case Texture::TextureType::EMISSION:
+            tex.type = "texture_emission";
+            break;
+    }
+
     return tex;
 }
 

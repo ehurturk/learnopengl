@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <imgui.h>
@@ -28,6 +29,8 @@ public:
     void update();
     void post_update();
 
+    void set_window_user_pointer(void *ptr);
+
     template<typename T>
     void bind_func(T func);
 
@@ -42,7 +45,7 @@ public:
     WindowConfig config;
 
     GLFWwindow *get_raw_window() { return window; }
-    int is_window_open() { return glfwWindowShouldClose(window); }
+    int is_window_open() { return !glfwWindowShouldClose(window); }
 
     void initialize();
 

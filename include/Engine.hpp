@@ -17,6 +17,7 @@
 #include "Shader.hpp"
 #include "Resource.hpp"
 #include "Window.hpp"
+#include "Camera.h"
 #include "Utils.hpp"
 #include "common.h"
 
@@ -24,17 +25,20 @@ struct EngineConfig {
     const std::string &title;
     ui32 width;
     ui32 height;
+    bool full_screen;
 };
 
 class Engine {
 public:
     Engine(const std::string &title, ui32 width, ui32 height);
+    Engine(const std::string &title);
     ~Engine();
 
-    void test();
     void start();
+    void update();
 
 private:
     EngineConfig cfg;
     std::unique_ptr<Window> m_Window;
+    std::unique_ptr<Camera> m_Camera;
 };

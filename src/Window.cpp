@@ -1,4 +1,5 @@
 #include "Window.hpp"
+#include "GLFW/glfw3.h"
 #include "imgui.h"
 #include "thirdparty/stb_image.h"
 #include <cassert>
@@ -34,8 +35,7 @@ void Window::initialize() {
 
     // glfw window creation
     // --------------------
-    window =
-            glfwCreateWindow(config.width, config.height, config.title.c_str(), NULL, NULL);
+    window = glfwCreateWindow(config.width, config.height, config.title.c_str(), NULL, NULL);
     if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -91,6 +91,10 @@ void Window::post_update() {
     // etc.)
     // -------------------------------------------------------------------------------
     glfwSwapBuffers(window);
+}
+
+void Window::set_window_user_pointer(void *ptr) {
+    glfwSetWindowUserPointer(window, ptr);
 }
 
 template<typename T>

@@ -1,4 +1,5 @@
 #include <Engine.hpp>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -12,46 +13,24 @@
 
 #include "Model.hpp"
 
-// settings
-const unsigned int SCR_WIDTH  = 800;
-const unsigned int SCR_HEIGHT = 600;
-
-glm::vec3 camPos       = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::vec3 up           = glm::vec3(0.0f, 1.0f, 0.0f);
-glm::vec3 camFront     = glm::vec3(0.0f, 0.0f, -1.0f);
-
 float dt = 0.0f;
 float lt = 0.0f;
 
-float lastX = SCR_WIDTH / 2, lastY = SCR_HEIGHT / 2;
+bool my_tool_active = false;
 
-float yaw;
-float pitch;
-
-bool first_time_mouse_enter = true;
-bool my_tool_active         = false;
-
-
-Engine::Engine(const std::string &title, ui32 width, ui32 height) : cfg((EngineConfig){.title = title, .width = width, .height = height}) {}
+Engine::Engine(const std::string &title, ui32 width, ui32 height) : cfg((EngineConfig){.title = title, .width = width, .height = height, .full_screen = false}) {}
+Engine::Engine(const std::string &title) : cfg((EngineConfig){.title = title, .full_screen = true}) {}
 
 Engine::~Engine() {}
 
-static void processInput(GLFWwindow *window);
-static void key_input_callback(GLFWwindow *window, int, int, int, int);
-static void cursor_pos_callback(GLFWwindow *window, double x, double y);
-static void framebuffer_size_callback(GLFWwindow *window, int width,
-                                      int height);
-unsigned int load_texture(const char *path);
-
-glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float) SCR_WIDTH / SCR_HEIGHT, 0.1f, 100.0f);
+static void processInput(GLFWwindow *window, std::unique_ptr<Camera> &cam);
 
 void Engine::start() {
     m_Window = std::make_unique<Window>(cfg.title, cfg.width, cfg.height);
-    m_Window->bind_func<Window::KeyInputCallbackFunc>(key_input_callback);
-    m_Window->bind_func<Window::MouseInputCallbackFunc>(cursor_pos_callback);
-    m_Window->bind_func<Window::FramebufferSizeCallbackFunc>(framebuffer_size_callback);
+    m_Camera = std::make_unique<Camera>(m_Window);
+    // m_Window->flags |= cfg.full_screen;
     m_Window->initialize();
+    m_Window->set_window_user_pointer(static_cast<void *>(m_Camera.get()));
     GLFWwindow *window = m_Window->get_raw_window();
 
     //     // set up vertex data (and buffer(s)) and configure vertex attributes
@@ -159,11 +138,14 @@ void Engine::start() {
             glm::vec3(1.5f, 0.2f, -1.5f),
             glm::vec3(-1.3f, 1.0f, -1.5f)};
 
-    while (!glfwWindowShouldClose(m_Window->get_raw_window())) {
+
+    while (m_Window->is_window_open()) {
         // input
         // -----
         m_Window->update();
-        processInput(window);
+        m_Camera->update();
+
+        processInput(window, m_Camera);
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -210,26 +192,9 @@ void Engine::start() {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-        // CUBE
-        // it is important to set them to identity matrices at the begininng of the loop since we will modify them
-        // glm::mat4 model      = glm::mat4(1.0f); // the model is already defined in the loop
-        glm::mat4 view = glm::mat4(1.0f);
-
-
-        // cube_position.z -= 0.005f; // moves the cube 0.005 units backwards every frame
-
-        // model = glm::translate(model, cube_position); // useful for the cube struct
-        // model = glm::rotate(model, glm::radians(cube_rotation.x), glm::vec3(1.0f, 0.0f, 0.0f)); // useful for the cube struct (x rotation)
-        // model = glm::rotate(model, glm::radians(cube_rotation.y), glm::vec3(0.0f, 1.0f, 0.0f)); // useful for the cube struct (y rotation)
-        // model = glm::rotate(model, glm::radians(cube_rotation.z), glm::vec3(0.0f, 0.0f, 1.0f)); // useful for the cube struct (z rotation)
-        // model = glm::scale(model, cube_scale); // useful for the cube struct (scale)
-
-        view = glm::lookAt(camPos, camFront + camPos, up);// view matrix, applied to the camera (-3.0f unit backwards)
-
         sponza_shader.use();
 
-        sponza_shader.setVec3("cam_pos", camPos);
+        sponza_shader.setVec3("cam_pos", m_Camera->position);
         sponza_shader.setFloat("material.shininess", 32.0f);
 
         // Directional light settings
@@ -259,8 +224,8 @@ void Engine::start() {
         }
 
         // cubeShader.setMat4("model", model); // (as already set in the loop)
-        sponza_shader.setMat4("view", view);
-        sponza_shader.setMat4("projection", projection);
+        sponza_shader.setMat4("view", m_Camera->get_view_matrix());
+        sponza_shader.setMat4("projection", m_Camera->get_projection_matrix());
 
         glm::mat4 model = glm::mat4(1.0f);
         model           = glm::translate(model, glm::vec3(20, 0, 20));
@@ -270,7 +235,7 @@ void Engine::start() {
 
         backpack_shader.use();
 
-        backpack_shader.setVec3("cam_pos", camPos);
+        backpack_shader.setVec3("cam_pos", m_Camera->position);
         backpack_shader.setFloat("material.shininess", 32.0f);
 
         // Directional light settings
@@ -300,8 +265,8 @@ void Engine::start() {
         }
 
         // cubeShader.setMat4("model", model); // (as already set in the loop)
-        backpack_shader.setMat4("view", view);
-        backpack_shader.setMat4("projection", projection);
+        backpack_shader.setMat4("view", m_Camera->get_view_matrix());
+        backpack_shader.setMat4("projection", m_Camera->get_projection_matrix());
 
         for (unsigned int i = 0; i < 10; i++) {
             // calculate the model matrix for each object and pass it to shader before drawing
@@ -325,8 +290,8 @@ void Engine::start() {
             model = glm::scale(model, glm::vec3(0.2f));
 
             lightShader.setMat4("model", model);
-            lightShader.setMat4("view", view);
-            lightShader.setMat4("projection", projection);
+            lightShader.setMat4("view", m_Camera->get_view_matrix());
+            lightShader.setMat4("projection", m_Camera->get_projection_matrix());
             lightShader.setVec3("color", glm::vec3(pointLightColors[i]));
 
             glBindVertexArray(lightVAO);
@@ -341,77 +306,31 @@ void Engine::start() {
     ImGui::DestroyContext();
 
     // TODO: Window automatically destructs itself here, so glfwTerminate() occurs here. NOTE!!
+    glDeleteVertexArrays(1, &lightVAO);
+    glDeleteBuffers(1, &VBO);
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this
 // frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-static void processInput(GLFWwindow *window) {
+static void processInput(GLFWwindow *window, std::unique_ptr<Camera> &cam) {
     float speed = 5.f * dt;
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         speed *= 1.5f;
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camPos += speed * camFront;
+        cam->position += speed * cam->front;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camPos -= speed * camFront;
+        cam->position -= speed * cam->front;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camPos -= speed * glm::normalize(glm::cross(camFront, up));
+        cam->position -= speed * glm::normalize(glm::cross(cam->front, cam->up));
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camPos += speed * glm::normalize(glm::cross(camFront, up));
+        cam->position += speed * glm::normalize(glm::cross(cam->front, cam->up));
     if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
         my_tool_active = true;
-}
-
-static void key_input_callback(GLFWwindow *window, int key, int scan_code, int action, int mods) {
-}
-
-static void cursor_pos_callback(GLFWwindow *window, double x, double y) {
-    if (first_time_mouse_enter) {
-        lastX                  = x;
-        lastY                  = y;
-        first_time_mouse_enter = false;
-    }
-    // calculate how much the mouse has moved in both the x and y axes
-    float xoffset = (float) x - lastX;
-    float yoffset = -1.0 * ((float) y - lastY);// center is at top left, hence y goes negative
-
-    lastX = x;
-    lastY = y;
-
-    const float mouse_sensitivity = 0.1f;
-    xoffset *= mouse_sensitivity;
-    yoffset *= mouse_sensitivity;
-
-    yaw += xoffset;
-    pitch += yoffset;
-
-    if (pitch > 89.0f)
-        pitch = 89.0f;
-    if (pitch < -89.0f)
-        pitch = -89.0f;
-
-    // create the normalized vector of mouse movement
-    glm::vec3 mouse_dir;
-    mouse_dir.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-    mouse_dir.y = sin(glm::radians(pitch));
-    mouse_dir.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-
-    camFront = glm::normalize(mouse_dir);
-}
-
-// glfw: whenever the window size changed (by OS or user resize) this callback
-// function executes
-// ---------------------------------------------------------------------------------------------
-static void framebuffer_size_callback(GLFWwindow *window, int width,
-                                      int height) {
-    // make sure the viewport matches the new window dimensions; note that width
-    // and height will be significantly larger than specified on retina displays.
-    projection = glm::perspective(glm::radians(45.0f), (float) width / (float) height, 0.1f, 100.0f);
-    glViewport(0, 0, width, height);
 }
