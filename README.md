@@ -2,7 +2,7 @@ Engine type of thing that is built while learning OpenGL.
 
 ![Sponza Model + point lights](gallery/img.jpeg)
 zhang!
-![zmangus](res/textures/awesomeface.png)
+![zmangus](https://media.giphy.com/media/i0tIuFkM9YfN81SImF/giphy-downsized-large.gif)
 xd
 
 problems:
