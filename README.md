@@ -1,7 +1,11 @@
 Engine type of thing that is built while learning OpenGL.
 
+Sponza Model:
 ![Sponza Model + point lights](gallery/img.jpeg)
-<img src="https://media.giphy.com/media/i0tIuFkM9YfN81SImF/giphy-downsized-large.gif" width="200px">
+Mandelbrot Set:
+
+<img src="https://media.giphy.com/media/i0tIuFkM9YfN81SImF/giphy-downsized-large.gif" width="400px">
+
 problems:
 opengl is toooooo slow for only 7 point lights and a humongous sponza model. (I'm thinking that the sponza model creates this huge performance drop, otherwise it is fine with 10 backpacks)
 
