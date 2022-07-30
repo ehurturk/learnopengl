@@ -28,8 +28,10 @@ void Camera::mouse_callback_fn(double xpos, double ypos) {
     update_cam_dirs();
 }
 
-void Camera::framebuffer_size_callback_fn(GLFWwindow *window, int width, int height) {
-    projection = glm::perspective(glm::radians(FOV), (float) width / (float) height, 0.1f, 100.0f);
+void Camera::framebuffer_size_callback_fn(GLFWwindow *window_, int width, int height) {
+    projection            = glm::perspective(glm::radians(FOV), (float) width / (float) height, 0.1f, 100.0f);
+    window->config.width  = width;
+    window->config.height = height;
     glViewport(0, 0, width, height);
 }
 

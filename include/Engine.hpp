@@ -36,7 +36,7 @@ class Engine {
 public:
     static Engine &Get() {
         if (!instance)
-            instance = std::unique_ptr<Engine>(new Engine("LearnOpenGL", 800, 600));
+            instance = std::unique_ptr<Engine>(new Engine());
 
         return *instance;
     }
@@ -44,6 +44,7 @@ public:
 
     void register_app(Application *app);
 
+    void create(const char *title, ui32 width, ui32 height);
     void start();
     void update();
 
@@ -58,8 +59,8 @@ public:
 
 private:
     static std::unique_ptr<Engine> instance;
-    Engine(const char *title, ui32 width, ui32 height);
-    Engine(const char *title);
+    Engine();
+
 
     EngineConfig cfg;
     std::unique_ptr<Window> m_Window;

@@ -19,16 +19,7 @@ float lt = 0.0f;
 bool my_tool_active = false;
 
 std::unique_ptr<Engine> Engine::instance = nullptr;
-Engine::Engine(const char *title, ui32 width, ui32 height) {
-    cfg.title  = title;
-    cfg.width  = width;
-    cfg.height = height;
-    std::cout << cfg.title << std::endl;
-}
-
-Engine::Engine(const char *title) {
-    cfg.title       = title;
-    cfg.full_screen = true;
+Engine::Engine() {
 }
 
 Engine::~Engine() {
@@ -41,6 +32,12 @@ Engine::~Engine() {
 static void processInput(GLFWwindow *window, std::unique_ptr<Camera> &cam);
 
 void Engine::register_app(Application *app) { m_App = app; }
+
+void Engine::create(const char *title, ui32 width, ui32 height) {
+    cfg.title  = title;
+    cfg.width  = width;
+    cfg.height = height;
+}
 
 void Engine::update() {
     while (m_Window->is_window_open()) {

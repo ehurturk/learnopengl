@@ -67,3 +67,4 @@ BreakBeforeBraces: Attach
 AccessModifierOffset: -4
 AlignConsecutiveMacros: Consecutive
 AlignEscapedNewlines: Left
+Cpp11BracedListStyle: false

@@ -16,7 +16,7 @@
 Window::Window(Window::WindowConfig cfg) : config(cfg) {
 }
 
-Window::Window(const std::string &title, ui32 width, ui32 height) : config((Window::WindowConfig){.title = title, .width = width, .height = height}) {
+Window::Window(const std::string &title, ui32 width, ui32 height) : config((Window::WindowConfig){ .title = title, .width = width, .height = height }) {
 }
 
 Window::~Window() {
@@ -34,7 +34,8 @@ void Window::initialize() {
 #endif
 
     // glfw window creation
-    // --------------------
+
+    // window = glfwCreateWindow(config.width, config.height, config.title.c_str(), NULL, NULL);
     window = glfwCreateWindow(config.width, config.height, config.title.c_str(), NULL, NULL);
     if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -54,6 +55,10 @@ void Window::initialize() {
         return;
     }
     stbi_set_flip_vertically_on_load(true);
+    int w, h;
+    glfwGetFramebufferSize(window, &w, &h);
+    config.width  = w;
+    config.height = h;
 
     glEnable(GL_DEPTH_TEST);
 
