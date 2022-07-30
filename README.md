@@ -1,8 +1,7 @@
 Engine type of thing that is built while learning OpenGL.
 
 ![Sponza Model + point lights](gallery/img.jpeg)
-![zmangus](https://media.giphy.com/media/i0tIuFkM9YfN81SImF/giphy-downsized-large.gif)
-
+<img src="https://media.giphy.com/media/i0tIuFkM9YfN81SImF/giphy-downsized-large.gif" width="200px">
 problems:
 opengl is toooooo slow for only 7 point lights and a humongous sponza model. (I'm thinking that the sponza model creates this huge performance drop, otherwise it is fine with 10 backpacks)
 
