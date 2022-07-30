@@ -16,3 +16,5 @@ using i8  = int8_t;
 using i16 = int16_t;
 using i32 = int32_t;
 using i64 = int64_t;
+
+#define ARR_SIZE(x) sizeof(x) / sizeof(x[0])

@@ -1,9 +1,7 @@
 #include "Model.hpp"
 #include <string>
 
-Model::Model(const std::string &path) {
-    load_model(path);
-}
+Model::Model() {}
 
 Model::~Model() {
     for (const auto &mesh : meshes) {
@@ -18,7 +16,7 @@ void Model::draw(const Shader &shader) {
 
 void Model::load_model(const std::string &path) {
     Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(path.c_str(), aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene *scene = importer.ReadFile(path.c_str(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
         return;

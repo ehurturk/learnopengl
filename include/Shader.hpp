@@ -23,6 +23,8 @@ public:
     // ------------------------------------------------------------------------
     Shader();
     ~Shader();
+
+    void create();
     void load_shader(const char *path, ShaderType type);
     // activate the shader
     // ------------------------------------------------------------------------
@@ -41,6 +43,8 @@ public:
     void setMat2(const std::string &name, const glm::mat2 &mat) const;
     void setMat3(const std::string &name, const glm::mat3 &mat) const;
     void setMat4(const std::string &name, const glm::mat4 &mat) const;
+
+    void set_uniform_block_binding(const std::string &name, int binding) const;
 
 private:
     // utility function for checking shader compilation/linking errors.

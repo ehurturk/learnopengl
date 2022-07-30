@@ -20,9 +20,13 @@
 #include "Camera.h"
 #include "Utils.hpp"
 #include "common.h"
+#include "Application.hpp"
+#include "graphics/UniformBuffer.hpp"
+
+// forward declerations
 
 struct EngineConfig {
-    const std::string &title;
+    const char *title;
     ui32 width;
     ui32 height;
     bool full_screen;
@@ -30,15 +34,39 @@ struct EngineConfig {
 
 class Engine {
 public:
-    Engine(const std::string &title, ui32 width, ui32 height);
-    Engine(const std::string &title);
+    static Engine &Get() {
+        if (!instance)
+            instance = std::unique_ptr<Engine>(new Engine("LearnOpenGL", 800, 600));
+
+        return *instance;
+    }
     ~Engine();
+
+    void register_app(Application *app);
 
     void start();
     void update();
 
+    template<typename T>
+    inline std::unique_ptr<T> &get_subsystem();
+
+    template<>
+    inline std::unique_ptr<Camera> &get_subsystem<Camera>() { return m_Camera; }
+
+    template<>
+    inline std::unique_ptr<Window> &get_subsystem<Window>() { return m_Window; }
+
 private:
+    static std::unique_ptr<Engine> instance;
+    Engine(const char *title, ui32 width, ui32 height);
+    Engine(const char *title);
+
     EngineConfig cfg;
     std::unique_ptr<Window> m_Window;
     std::unique_ptr<Camera> m_Camera;
+    /* std::stack<std::unique_ptr<EngineSystem>> systems; */
+    /* for system in systems system->start(); */
+    /* for system in systems system->update(dt); */
+    Application *m_App;
+    UniformBuffer m_UniformBuffer;
 };

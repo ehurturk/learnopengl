@@ -2,13 +2,14 @@
 #include "common.h"
 #include "glm/gtc/type_ptr.hpp"
 
-Shader::Shader() {
-    // shader Program
-    ID = glCreateProgram();
-}
+Shader::Shader() {}
 
 Shader::~Shader() {
     glDeleteProgram(ID);
+}
+
+void Shader::create() {
+    ID = glCreateProgram();
 }
 
 void Shader::load_shader(const char *path, ShaderType type) {
@@ -101,6 +102,11 @@ void Shader::setMat3(const std::string &name, const glm::mat3 &mat) const {
 // ------------------------------------------------------------------------
 void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const {
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+}
+
+void Shader::set_uniform_block_binding(const std::string &name, int binding) const {
+    unsigned int ubo_index = glGetUniformBlockIndex(ID, name.c_str());
+    glUniformBlockBinding(ID, ubo_index, binding);
 }
 
 void Shader::checkCompileErrors(unsigned int shader, std::string type) {

@@ -4,13 +4,7 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<ui32> &indices
     setup_mesh();
 }
 
-Mesh::~Mesh() {
-    // glDeleteVertexArrays(1, &vao);
-    // glDeleteBuffers(1, &vbo);
-    // glDeleteBuffers(1, &ebo);
-    // for (auto &texture : textures)
-    //     glDeleteTextures(1, &texture.id);
-}
+Mesh::~Mesh() {}
 
 void Mesh::setup_mesh() {
     glGenVertexArrays(1, &vao);
@@ -55,6 +49,7 @@ void Mesh::draw(const Shader &shader) const {
         else if (std::strcmp(base_name.c_str(), "texture_emission") == 0)
             n = std::to_string(no_emission++);// transfer unsigned int to string
         shader.setInt("material." + base_name + n, i);
+
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
 

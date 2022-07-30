@@ -15,7 +15,7 @@ struct Material {
 
 struct DirectionalLight {
     vec3 direction;
-    
+
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -36,20 +36,19 @@ struct PointLight {
 uniform Material material;
 uniform DirectionalLight directional_light;
 
-#define NR_POINT_LIGHTS 7
+#define NR_POINT_LIGHTS 4
 uniform PointLight point_lights[NR_POINT_LIGHTS];
 
 
 uniform vec3 cam_pos;
 
 vec3 calculate_directional_light(DirectionalLight light, vec3 normal, vec3 viewDir) {
-    vec3 lightDir = normalize(-light.direction);
+    vec3 lightDir          = normalize(-light.direction);
     vec3 reflect_direction = reflect(-lightDir, normal);
 
     float diff = max(dot(normal, lightDir), 0.0);
     float spec = pow(max(dot(viewDir, reflect_direction), 0.0), material.shininess);
-    float amb = 1.0f;
-
+    float amb  = 1.0f;
 
     vec3 ambient  = amb * light.ambient * texture(material.texture_diffuse1, TexCoords).rgb;
     vec3 diffuse  = diff * light.diffuse * texture(material.texture_diffuse1, TexCoords).rgb;
@@ -59,40 +58,40 @@ vec3 calculate_directional_light(DirectionalLight light, vec3 normal, vec3 viewD
 }
 
 vec3 calculate_point_light(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
-    float distance = length(light.position - fragPos);
+    float distance    = length(light.position - fragPos);
     float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * pow(distance, 2));
 
-    vec3 lightDir = normalize(light.position - fragPos);
+    vec3 lightDir   = normalize(light.position - fragPos);
     vec3 reflectDir = reflect(-lightDir, normal);
 
     float diff = max(dot(normal, lightDir), 0.0);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    float amb = 1.0;
+    float amb  = 1.0;
 
-    vec3 ambient = amb * light.ambient * texture(material.texture_diffuse1, TexCoords).rgb; // ambiant strength (pixel value) * ambient color * diffuse map
-    vec3 diffuse = diff * light.diffuse * texture(material.texture_diffuse1, TexCoords).rgb; // diffuse strength (pixel value) * diffuse color * diffuse map
-    vec3 specular = spec * light.specular * texture(material.texture_specular1, TexCoords).rgb; // specular strength (pixel value) * specular color * specular map
+    vec3 ambient           = amb * light.ambient * texture(material.texture_diffuse1, TexCoords).rgb;// ambiant strength (pixel value) * ambient color * diffuse map
+    vec4 diffuse_color_tex = texture(material.texture_diffuse1, TexCoords);                          // diffuse strength (pixel value) * diffuse color * diffuse map
+    if (diffuse_color_tex.a < 0.5) {
+        discard;
+    }
+    vec3 diffuse  = diff * light.diffuse * diffuse_color_tex.rgb;
+    vec3 specular = spec * light.specular * texture(material.texture_specular1, TexCoords).rgb;// specular strength (pixel value) * specular color * specular map
 
     return (ambient + diffuse + specular) * attenuation;
-
 }
 
 void main() {
     vec3 color = vec3(0.0f);
 
-    vec3 norm = normalize(Normal);
+    vec3 norm    = normalize(Normal);
     vec3 viewDir = normalize(cam_pos - FragPos);
 
     color += calculate_directional_light(directional_light, norm, viewDir);
-    
-    for (int i = 0; i < NR_POINT_LIGHTS; i++) 
+
+    for (int i = 0; i < NR_POINT_LIGHTS; i++)
         color += calculate_point_light(point_lights[i], norm, FragPos, viewDir);
-    
-    // emission
-    vec3 emission = texture(material.texture_emission1, TexCoords).rgb;
-    // color += emission;
 
     FragColor = vec4(color, 1.0);
+    // FragColor = vec4(1.0f);
 }
 
 // TODO:
