@@ -30,12 +30,14 @@ public:
 	$name();
 	~$name();
 
-	// Executed when beginning the app
+	// Executed on initialization
 	void start() override;
 	// Executed each frame
 	void update(float dt) override;
 	// Executed each frame for UI
 	void imgui_update() override;
+
+	// Additional functions...
 private:
 	// All private variables...
 };
@@ -48,7 +50,7 @@ $name::$name(): Application("$name", 800, 600) { }
 $name::~$name() { }
 
 void $name::start() {
-	// Executed when beginning the app
+	// Executed on initialization
 }
 
 void $name::update(float dt) {

@@ -1,10 +1,12 @@
 Engine type of thing that is built while learning OpenGL.
+The code may be trash rn, because I don't like C++ ZMANG!
 
-Sponza Model:
-![Sponza Model + point lights](gallery/img.jpeg)
 Mandelbrot Set:
 
 ![ZMANGUS XDDD](gallery/giphy.gif)
+
+Sponza Model:
+![Sponza Model + point lights](gallery/img.jpeg)
 xdd
 
 made possible thanks to learnopengl.com.
