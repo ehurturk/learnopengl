@@ -36,7 +36,7 @@ void SponzaApp::update(float dt) {
 
     backpack_shader.use();
 
-    backpack_shader.setVec3("cam_pos", Engine::Get().get_subsystem<Camera>()->position);
+    backpack_shader.setVec3("cam_pos", Engine::Get().get_subsystem<Camera3D>()->position);
     backpack_shader.setFloat("material.shininess", 32.0f);
 
     // Directional light settings
@@ -94,7 +94,7 @@ void SponzaApp::imgui_update() {
     ImGui::Text("FPS: %.3f", ImGui::GetIO().Framerate);
 
     // Plot some values
-    const float my_values[] = {0.2f, 0.1f, 1.0f, 0.5f, 0.9f, 2.2f};
+    const float my_values[] = { 0.2f, 0.1f, 1.0f, 0.5f, 0.9f, 2.2f };
     ImGui::PlotLines("Frame Times", my_values, IM_ARRAYSIZE(my_values));
 
     // Display contents in a scrolling region
@@ -106,9 +106,9 @@ void SponzaApp::imgui_update() {
 // frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
 void SponzaApp::process_input(float dt) {
-    GLFWwindow *window           = Engine::Get().get_subsystem<Window>()->get_raw_window();
-    std::unique_ptr<Camera> &cam = Engine::Get().get_subsystem<Camera>();
-    float speed                  = 5.f * dt;
+    GLFWwindow *window             = Engine::Get().get_subsystem<Window>()->get_raw_window();
+    std::unique_ptr<Camera3D> &cam = Engine::Get().get_subsystem<Camera3D>();
+    float speed                    = 5.f * dt;
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         speed *= 1.5f;
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)

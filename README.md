@@ -5,12 +5,19 @@ Sponza Model:
 Mandelbrot Set:
 
 <img src="gallery/giphy.gif" width="400px">
-
-problems:
-opengl is toooooo slow for only 7 point lights and a humongous sponza model. (I'm thinking that the sponza model creates this huge performance drop, otherwise it is fine with 10 backpacks)
+xdd
 
 made possible thanks to learnopengl.com.
 
-Currently in section "Advanced OpenGL"
+To create a new Application, type:
+`sh generate_app.sh -p YOUR_APP_LOCATION -n YOUR_APP_NAME`
+Note that `YOUR_APP_LOCATION` must be in one of the directories that CMake knows, such as
+`apps/`
+`src/`
+`include/`
+Example:
+`sh generate_app.sh -p apps/learnopengl -n DepthTest` will create 2 files: `DepthTest.h` and `DepthTest.cpp` which is a boilerplate code for a new application.
+Also the script will generate the necessary build files both in `Release` and `Debug`.
 
-also the code is trash rn, my motiovation was to first implement necessary opengl stuff and then later organize everything so i'm organizing everything now
+Once you have made your app, you can go to `src/main.cpp` and instantiate your app.
+

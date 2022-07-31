@@ -7,10 +7,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-class Camera {
+class Camera3D {
 public:
-    Camera(std::unique_ptr<Window> &window);
-    virtual ~Camera() {}
+    Camera3D(std::unique_ptr<Window> &window);
+    virtual ~Camera3D() {}
     virtual void update();
     virtual glm::mat4 &get_view_matrix();
     virtual glm::mat4 &get_projection_matrix();
@@ -38,12 +38,4 @@ private:
     void mouse_callback_fn(double x, double y);
     void framebuffer_size_callback_fn(GLFWwindow *window, int width, int height);
     void key_callback_fn(GLFWwindow *window, int key, int scan_code, int action, int mods);
-};
-
-class FlyCamera : public Camera {
-public:
-    FlyCamera(const std::unique_ptr<Window> &window);
-    ~FlyCamera();
-
-private:
 };

@@ -18,6 +18,10 @@ float lt = 0.0f;
 
 bool my_tool_active = false;
 
+struct GlobalUniformData {
+    glm::mat4 projview;
+};
+
 std::unique_ptr<Engine> Engine::instance = nullptr;
 Engine::Engine() {
 }
@@ -28,8 +32,6 @@ Engine::~Engine() {
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 }
-
-static void processInput(GLFWwindow *window, std::unique_ptr<Camera> &cam);
 
 void Engine::register_app(Application *app) { m_App = app; }
 
@@ -44,8 +46,8 @@ void Engine::update() {
         m_Window->update();
         m_Camera->update();
 
-        // set the global view matrix
-        m_UniformBuffer.set_data(m_Camera->get_view_matrix(), sizeof(glm::mat4));
+        // set the global proj view matrix
+        m_UniformBuffer.set_data(m_Camera->get_projection_matrix() * m_Camera->get_view_matrix(), offsetof(GlobalUniformData, projview));
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -68,15 +70,16 @@ void Engine::start() {
     std::cout << cfg.title << std::endl;
 
     m_Window = std::make_unique<Window>(cfg.title, cfg.width, cfg.height);
-    m_Camera = std::make_unique<Camera>(m_Window);
+    m_Camera = std::make_unique<Camera3D>(m_Window);
 
     m_Window->initialize();
     m_Window->set_window_user_pointer(static_cast<void *>(m_Camera.get()));
 
     // init uniform buffer for global shader uniforms
     m_UniformBuffer = UniformBuffer();
-    m_UniformBuffer.init(2 * sizeof(glm::mat4));
-    m_UniformBuffer.bind(0);
-    m_UniformBuffer.load_data(m_Camera->get_projection_matrix());
+    m_UniformBuffer.init(1 * sizeof(glm::mat4));
+    m_UniformBuffer.bind(0); /* bind binding 0 ranging all data */
+    /* alternatively, one can use .bind(0, offset, size) to bind specific portion of data */
+    /* binding specific region of data is especially useful when an UBO is being used as a buffer of all uniforms, and one can easily select a specific part of the buffer to load in the uniforms.*/
     m_App->start();
 }

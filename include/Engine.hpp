@@ -52,7 +52,7 @@ public:
     inline std::unique_ptr<T> &get_subsystem();
 
     template<>
-    inline std::unique_ptr<Camera> &get_subsystem<Camera>() { return m_Camera; }
+    inline std::unique_ptr<Camera3D> &get_subsystem<Camera3D>() { return m_Camera; }
 
     template<>
     inline std::unique_ptr<Window> &get_subsystem<Window>() { return m_Window; }
@@ -64,7 +64,7 @@ private:
 
     EngineConfig cfg;
     std::unique_ptr<Window> m_Window;
-    std::unique_ptr<Camera> m_Camera;
+    std::unique_ptr<Camera3D> m_Camera;
     /* std::stack<std::unique_ptr<EngineSystem>> systems; */
     /* for system in systems system->start(); */
     /* for system in systems system->update(dt); */

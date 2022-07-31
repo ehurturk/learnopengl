@@ -6,13 +6,12 @@ layout(location = 2) in vec2 aTexCoords;
 out vec2 TexCoords;
 
 layout(std140) uniform Matrices {
-    mat4 projection;
-    mat4 view;
+    mat4 projview;
 };
 
 uniform mat4 model;
 
 void main() {
     TexCoords   = aTexCoords;
-    gl_Position = projection * view * model * vec4(aPos, 1.0);
+    gl_Position = projview * model * vec4(aPos, 1.0);
 }
