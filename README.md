@@ -4,7 +4,7 @@ Sponza Model:
 ![Sponza Model + point lights](gallery/img.jpeg)
 Mandelbrot Set:
 
-<img src="gallery/giphy.gif" width="400px">
+![ZMANGUS XDDD](gallery/giphy.gif)
 xdd
 
 made possible thanks to learnopengl.com.
@@ -14,9 +14,9 @@ To create a new Application, type:
 
 Note that `YOUR_APP_LOCATION` must be in one of the directories that CMake knows, such as
 
-`apps/`
-`src/`
-`include/`
+- `apps/`
+- `src/`
+- `include/`
 
 Example:
 `sh generate_app.sh -p apps/learnopengl -n DepthTest` will create 2 files: `DepthTest.h` and `DepthTest.cpp` which is a boilerplate code for a new application.
