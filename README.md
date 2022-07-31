@@ -19,7 +19,10 @@ Note that `YOUR_APP_LOCATION` must be in one of the directories that CMake knows
 - `include/`
 
 Example:
-`sh generate_app.sh -p apps/learnopengl -n DepthTest` will create 2 files: `DepthTest.h` and `DepthTest.cpp` which is a boilerplate code for a new application.
+
+`sh generate_app.sh -p apps/learnopengl -n DepthTest` 
+
+This will create 2 files: `DepthTest.h` and `DepthTest.cpp` which is a boilerplate code for a new application.
 Also the script will generate the necessary build files both in `Release` and `Debug`.
 
 Once you have made your app, you can go to `src/main.cpp` and instantiate your app.
