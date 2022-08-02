@@ -36,4 +36,5 @@ private:
     };
 
     bool my_tool_active = false;
+    Texture tex;
 };
