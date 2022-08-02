@@ -5,7 +5,7 @@ Mandelbrot Set:
 
 ![ZMANGUS XDDD](gallery/giphy.gif)
 
-Sponza Model:
+Sponza Model with ImGui:
 ![Sponza Model + point lights](gallery/example.jpeg)
 xdd
 
