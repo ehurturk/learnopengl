@@ -29,3 +29,4 @@ Also the script will generate the necessary build files both in `Release` and `D
 
 Once you have made your app, you can go to `src/main.cpp` and instantiate your app.
 
+Note: obj models are not included in this repo so good luck on finding them ZMAAANG!!!! xdd
