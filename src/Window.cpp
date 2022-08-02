@@ -3,14 +3,16 @@
 #include "imgui.h"
 #include "thirdparty/stb_image.h"
 #include <cassert>
+#include <iterator>
 
 Window::Window(Window::WindowConfig cfg) : config(cfg) {
 }
 
-Window::Window(const std::string &title, ui32 width, ui32 height) : config((Window::WindowConfig){ .title = title, .width = width, .height = height }) {
+Window::Window(const std::string &title, ui32 width, ui32 height, bool fullscreen) : config((Window::WindowConfig){ .title = title, .width = width, .height = height, .fullscreen = fullscreen }) {
 }
 
 Window::~Window() {
+    glfwDestroyWindow(window);
     glfwTerminate();
 }
 
@@ -116,8 +118,18 @@ void Window::initialize() {
 #endif
 
     // glfw window creation
+    if (config.fullscreen) {
+        GLFWmonitor *monitor = glfwGetPrimaryMonitor();
 
-    window = glfwCreateWindow(config.width, config.height, config.title.c_str(), NULL, NULL);
+        const GLFWvidmode *mode = glfwGetVideoMode(monitor);
+        config.width            = mode->width;
+        config.height           = mode->height;
+        window                  = glfwCreateWindow(400, 300, config.title.c_str(), monitor, NULL);
+        glfwSetWindowSize(window, mode->width, mode->height);
+    } else {
+        window = glfwCreateWindow(config.width, config.height, config.title.c_str(), NULL, NULL);
+    }
+
     if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -136,10 +148,8 @@ void Window::initialize() {
         return;
     }
     stbi_set_flip_vertically_on_load(true);
-    int w, h;
-    glfwGetFramebufferSize(window, &w, &h);
-    config.width  = w;
-    config.height = h;
+
+    glfwGetFramebufferSize(window, (int *) &config.width, (int *) &config.height);
 
     glEnable(GL_DEPTH_TEST);
 

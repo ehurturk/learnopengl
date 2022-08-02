@@ -44,7 +44,7 @@ public:
 
     void register_app(Application *app);
 
-    void create(const char *title, ui32 width, ui32 height);
+    void create(AppConfig cfg);
     void start();
     void update();
 

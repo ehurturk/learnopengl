@@ -21,6 +21,7 @@ public:
         const std::string &title;
         ui32 width;
         ui32 height;
+        bool fullscreen = false;
     };
 
     struct WindowData {
@@ -29,7 +30,7 @@ public:
     };
 
     explicit Window(WindowConfig cfg);
-    Window(const std::string &title, ui32 width, ui32 height);
+    Window(const std::string &title, ui32 width, ui32 height, bool fullscreen = false);
     ~Window();
 
     void update();

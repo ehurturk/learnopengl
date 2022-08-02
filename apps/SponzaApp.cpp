@@ -22,14 +22,10 @@ void SponzaApp::start() {
     stbi_set_flip_vertically_on_load(true);
 
     phong_shader.set_uniform_block_binding("Matrices", 0);
-
-    tex = ResourceManager::load_ogl_texture_from_path("../res/models/globe-sphere/earth.jpeg");
 }
 
 void SponzaApp::update(float dt) {
     process_input(dt);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     phong_shader.use();
 
@@ -84,75 +80,6 @@ void SponzaApp::update(float dt) {
 SponzaApp::~SponzaApp() {}
 
 void SponzaApp::imgui_update() {
-    static bool opt_fullscreen                = true;
-    static bool opt_padding                   = false;
-    static bool docking_enabled               = true;
-    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-
-    // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-    // because it would be confusing to have two docking targets within each others.
-    ImGuiWindowFlags window_flags_docking = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-    if (opt_fullscreen) {
-        const ImGuiViewport *viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(viewport->WorkPos);
-        ImGui::SetNextWindowSize(viewport->WorkSize);
-        ImGui::SetNextWindowViewport(viewport->ID);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-        window_flags_docking |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-        window_flags_docking |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-    } else {
-        dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-    }
-
-    // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
-    // and handle the pass-thru hole, so we ask Begin() to not render a background.
-    if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-        window_flags_docking |= ImGuiWindowFlags_NoBackground;
-
-    // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-    // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-    // all active windows docked into it will lose their parent and become undocked.
-    // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-    // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-    if (!opt_padding)
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-    ImGui::Begin("DockSpace Demo", &docking_enabled, window_flags_docking);
-    if (!opt_padding)
-        ImGui::PopStyleVar();
-
-    if (opt_fullscreen)
-        ImGui::PopStyleVar(2);
-
-    // Submit the DockSpace
-    ImGuiIO &dock_io = ImGui::GetIO();
-    if (dock_io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
-        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-    }
-
-    if (ImGui::BeginMenuBar()) {
-        if (ImGui::BeginMenu("File")) {
-            ImGui::MenuItem("Open...", "CTRL+O");
-            ImGui::MenuItem("Save...", "CTRL+S");
-            ImGui::MenuItem("Save as...", "CTRL+A");
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("Options")) {
-            // Disabling fullscreen would allow the window to be moved to the front of other windows,
-            // which we can't undo at the moment without finer window depth/z control.
-            ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
-            ImGui::MenuItem("Padding", NULL, &opt_padding);
-            ImGui::Separator();
-
-            if (ImGui::MenuItem("Close", NULL, false))
-                docking_enabled = false;
-            ImGui::EndMenu();
-        }
-        ImGui::EndMenuBar();
-    }
-
-
     /**================================================== *
      * ==========  Editor Inspector Panel  ========== *
      * ================================================== */
@@ -224,23 +151,7 @@ void SponzaApp::imgui_update() {
     ImGui::End();
     /* =======  End of Stat Window  ======= */
 
-    /**================================================== *
-     * ==========  Viewport  ========== *
-     * ================================================== */
-    static bool viewport_open = true;
-    ImGui::Begin("Viewport", &viewport_open);
-    {
-        ImGui::BeginChild("GameRender");
-        // Get the size of the child (i.e. the whole draw size of the windows).
-        ImVec2 wsize = ImGui::GetWindowSize();
-        ImGui::Image((ImTextureID) tex.id, wsize, ImVec2(0, 1), ImVec2(1, 0));
-        ImGui::EndChild();
-    }
-    ImGui::End();
-
-    /* =======  End of Viewport  ======= */
-
-    ImGui::End();
+    // ImGui::End();
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this

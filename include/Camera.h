@@ -20,6 +20,8 @@ public:
     glm::vec3 right;
     glm::vec3 front;
 
+    void adjust_viewport(int width, int height);
+
 protected:
     std::unique_ptr<Window> &window;
 

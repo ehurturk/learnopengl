@@ -6,7 +6,7 @@ Mandelbrot Set:
 ![ZMANGUS XDDD](gallery/giphy.gif)
 
 Sponza Model:
-![Sponza Model + point lights](gallery/img.jpeg)
+![Sponza Model + point lights](gallery/example.jpeg)
 xdd
 
 made possible thanks to learnopengl.com.

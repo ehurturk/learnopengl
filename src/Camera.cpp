@@ -1,13 +1,13 @@
 #include "Camera.h"
 
 void Camera3D::mouse_callback_fn(double xpos, double ypos) {
-    if (ImGui::GetIO().WantCaptureMouse) {
-        return;
-    }
+    // if (ImGui::GetIO().WantCaptureMouse) {
+    //     return;
+    // }
 
-    if (glfwGetMouseButton(window->get_raw_window(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
-        return;
-    }
+    // if (glfwGetMouseButton(window->get_raw_window(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
+    //     return;
+    // }
     if (firstTimeEntered) {
         lastX            = xpos;
         lastY            = ypos;
@@ -33,6 +33,13 @@ void Camera3D::mouse_callback_fn(double xpos, double ypos) {
         PITCH = -89.0f;
 
     update_cam_dirs();
+}
+
+void Camera3D::adjust_viewport(int width, int height) {
+    projection = glm::perspective(glm::radians(FOV), (float) width / (float) height, 0.1f, 100.0f);
+    glViewport(0, 0, width, height);
+    // window->config.width  = width;
+    // window->config.height = height;
 }
 
 void Camera3D::framebuffer_size_callback_fn(GLFWwindow *window_, int width, int height) {

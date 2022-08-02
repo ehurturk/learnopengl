@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
     std::shared_ptr<SponzaApp> app = std::make_shared<SponzaApp>();
     AppConfig cfg                  = app->get_config();
 
-    engine.create(cfg.title, cfg.width, cfg.height);
+    engine.create(cfg);
     engine.register_app(app.get());
 
     Engine::Get().start();
