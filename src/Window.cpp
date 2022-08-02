@@ -4,15 +4,6 @@
 #include "thirdparty/stb_image.h"
 #include <cassert>
 
-// void framebuffer_size_callback(GLFWwindow *window, int width,
-//                                int height) {
-//     // make sure the viewport matches the new window dimensions; note that width
-//     // and height will be significantly larger than specified on retina displays.
-// TODO: Change camera projection matrix based on new width and height values.
-//     // something like camera->set_projection(width, height);
-//     glViewport(0, 0, width, height);
-// }
-
 Window::Window(Window::WindowConfig cfg) : config(cfg) {
 }
 
@@ -22,6 +13,11 @@ Window::Window(const std::string &title, ui32 width, ui32 height) : config((Wind
 Window::~Window() {
     glfwTerminate();
 }
+
+double prevTime = 0.0f;
+double crntTime = 0.0f;
+double deltaT;
+unsigned int counter = 0;
 
 void Window::initialize() {
     glfwInit();
@@ -79,6 +75,17 @@ void Window::initialize() {
 
 void Window::update() {
     glfwPollEvents();
+    crntTime = glfwGetTime();
+    deltaT   = crntTime - prevTime;
+    counter++;
+    if (deltaT >= 1.0f / 30.0f) {
+        double fps = (1.0f / deltaT) * counter;
+        double ms  = (deltaT / counter) * 1000.0f;
+        data.fps   = fps;
+        data.ms    = ms;
+        prevTime   = crntTime;
+        counter    = 0.0f;
+    }
 }
 
 void Window::post_update() {

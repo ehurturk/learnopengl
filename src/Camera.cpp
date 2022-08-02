@@ -1,6 +1,13 @@
 #include "Camera.h"
 
 void Camera3D::mouse_callback_fn(double xpos, double ypos) {
+    if (ImGui::GetIO().WantCaptureMouse) {
+        return;
+    }
+
+    if (glfwGetMouseButton(window->get_raw_window(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
+        return;
+    }
     if (firstTimeEntered) {
         lastX            = xpos;
         lastY            = ypos;

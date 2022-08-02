@@ -36,7 +36,7 @@ struct PointLight {
 uniform Material material;
 uniform DirectionalLight directional_light;
 
-#define NR_POINT_LIGHTS 4
+#define NR_POINT_LIGHTS 1
 uniform PointLight point_lights[NR_POINT_LIGHTS];
 
 
@@ -91,7 +91,6 @@ void main() {
         color += calculate_point_light(point_lights[i], norm, FragPos, viewDir);
 
     FragColor = vec4(color, 1.0);
-    // FragColor = vec4(1.0f);
 }
 
 // TODO:

@@ -22,6 +22,12 @@ public:
         ui32 width;
         ui32 height;
     };
+
+    struct WindowData {
+        float fps;
+        float ms;
+    };
+
     explicit Window(WindowConfig cfg);
     Window(const std::string &title, ui32 width, ui32 height);
     ~Window();
@@ -49,6 +55,9 @@ public:
 
     void initialize();
 
+    inline float get_fps() { return data.fps; }
+    inline float get_ms_per_frame() { return data.ms; }
+
 private:
     struct GLFWCallbackData {
         KeyInputCallbackFunc K_fn;
@@ -58,4 +67,5 @@ private:
 
     GLFWwindow *window;
     GLFWCallbackData callback_data;
+    WindowData data;
 };
