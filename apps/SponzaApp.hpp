@@ -4,10 +4,12 @@
 #include "../include/graphics/UniformBuffer.hpp"
 #include "../include/Quark.hpp"
 #include "../include/Engine.hpp"
+#include "graphics/SkyBox.h"
 
 class SponzaApp : public Application {
 public:
-    SponzaApp() : Application("Sponza", 1280, 1024) {}
+    SponzaApp() : Application("Sponza", 1280, 1024) {
+    }
     ~SponzaApp();
     void start() override;
     void update(float dt) override;
@@ -20,6 +22,8 @@ private:
 
     Model backpack;
     Model sponza;
+
+    SkyBox *skybox;
 
     glm::vec3 colorWhite = glm::vec3(1.0f, 1.0f, 1.0f);
 

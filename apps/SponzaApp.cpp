@@ -8,6 +8,7 @@
 #include <thread>
 
 void SponzaApp::start() {
+    skybox = new SkyBox();
     phong_shader.create();
 
     phong_shader.load_shader("../res/shaders/cube.vs", Shader::ShaderType::VERTEX_SHADER);
@@ -22,6 +23,19 @@ void SponzaApp::start() {
     stbi_set_flip_vertically_on_load(true);
 
     phong_shader.set_uniform_block_binding("Matrices", 0);
+
+    std::array<const char *, 6> faces = {
+        "../res/skyboxes/water/right.jpg",
+        "../res/skyboxes/water/left.jpg",
+        "../res/skyboxes/water/top.jpg",
+        "../res/skyboxes/water/bottom.jpg",
+        "../res/skyboxes/water/front.jpg",
+        "../res/skyboxes/water/back.jpg"
+    };
+
+    stbi_set_flip_vertically_on_load(false);
+    skybox->load_faces(faces);
+    stbi_set_flip_vertically_on_load(true);
 }
 
 void SponzaApp::update(float dt) {
@@ -75,9 +89,12 @@ void SponzaApp::update(float dt) {
     phong_shader.setMat4("model", sponza_model);
     phong_shader.setMat3("model_corrected", glm::mat3(glm::transpose(glm::inverse(sponza_model))));
     sponza.draw(phong_shader);
+
+    // NOTE: DRaw the skybox last
+    skybox->draw();
 }
 
-SponzaApp::~SponzaApp() {}
+SponzaApp::~SponzaApp() { delete skybox; }
 
 void SponzaApp::imgui_update() {
     /**================================================== *
