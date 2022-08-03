@@ -9,4 +9,10 @@
 7) Code design
    1) Zmangus WindowConfig and AppConfig are the same fucking thing then why 2 of them?
    2) Also on framebuffer init, use m_Window->config.width and height since they are initialized with glfwGetFramebufferSize otherwise it is fucked up
-   
+8) MAJOR BAG ALERT: 
+   1) Now I have the default framebuffer and the other render framebuffer
+   2) Hence, I render everything to the framebuffer texture, and I use the texture in ImGui
+   3) Since post processing is a screen-space effect, I can't add it to ImGui directly (I can add only if ImGui is not being used with a simple fullscreen quad and a shader and the texture binding)
+   4) However, I can create another framebuffer and texture with the same width and height of the viewport, and then render the entire texture into it with it's own post processing shader and then render ImGui::Image passing the 2nd texture value with its shaders.
+
+IDK MAN THIS WHOLE IMGUI THING SEEMS LIKE A TRASH
