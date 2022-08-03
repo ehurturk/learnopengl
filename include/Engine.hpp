@@ -25,13 +25,6 @@
 
 // forward declerations
 
-struct EngineConfig {
-    const char *title;
-    ui32 width;
-    ui32 height;
-    bool full_screen;
-};
-
 class Engine {
 public:
     static Engine &Get() {
@@ -61,8 +54,11 @@ private:
     static std::unique_ptr<Engine> instance;
     Engine();
 
+    void framebuffer_callback_fn(GLFWwindow *, int, int);
+    void mouse_input_callback_fn(GLFWwindow *, double, double);
+    void key_input_callback_fn(GLFWwindow *, int, int, int, int);
 
-    EngineConfig cfg;
+    AppConfig cfg;
     std::unique_ptr<Window> m_Window;
     std::unique_ptr<Camera3D> m_Camera;
     /* std::stack<std::unique_ptr<EngineSystem>> systems; */
@@ -70,4 +66,16 @@ private:
     /* for system in systems system->update(dt); */
     Application *m_App;
     UniformBuffer m_UniformBuffer;
+
+    float quad_vertices[24] = {
+        -1.0f, 1.0f, 0.0f, 1.0f,
+        -1.0f, -1.0f, 0.0f, 0.0f,
+        1.0f, -1.0f, 1.0f, 0.0f,
+
+        -1.0f, 1.0f, 0.0f, 1.0f,
+        1.0f, -1.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, 1.0f, 1.0f
+    };
+    unsigned int qvbo, qvao;
+    Shader quad_shader;
 };

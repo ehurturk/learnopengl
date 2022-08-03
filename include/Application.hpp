@@ -8,15 +8,17 @@ struct AppConfig {
     ui32 width;
     ui32 height;
     bool fullscreen = false;
+    bool raw        = false;
 };
 
 class Application {
 public:
-    Application(const char *title, ui32 w, ui32 h, bool fullscreen = false) {
+    Application(const char *title, ui32 w, ui32 h, bool fullscreen = false, bool raw = false) {
         config.title      = title;
         config.width      = w;
         config.height     = h;
         config.fullscreen = fullscreen;
+        config.raw        = raw;
     }
     virtual ~Application() {}
 

@@ -22,6 +22,9 @@ public:
 
     void adjust_viewport(int width, int height);
 
+    void mouse_callback_fn(double x, double y);
+    void key_callback_fn(int key, int scan_code, int action, int mods);
+
 protected:
     std::unique_ptr<Window> &window;
 
@@ -37,7 +40,4 @@ protected:
 private:
     bool firstTimeEntered = true;
     float lastX, lastY;
-    void mouse_callback_fn(double x, double y);
-    void framebuffer_size_callback_fn(GLFWwindow *window, int width, int height);
-    void key_callback_fn(GLFWwindow *window, int key, int scan_code, int action, int mods);
 };

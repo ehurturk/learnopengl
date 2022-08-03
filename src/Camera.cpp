@@ -35,39 +35,16 @@ void Camera3D::mouse_callback_fn(double xpos, double ypos) {
     update_cam_dirs();
 }
 
+void Camera3D::key_callback_fn(int key, int scan_code, int action, int mods) {
+}
+
 void Camera3D::adjust_viewport(int width, int height) {
     projection = glm::perspective(glm::radians(FOV), (float) width / (float) height, 0.1f, 100.0f);
     glViewport(0, 0, width, height);
-    // window->config.width  = width;
-    // window->config.height = height;
 }
 
-void Camera3D::framebuffer_size_callback_fn(GLFWwindow *window_, int width, int height) {
-    projection = glm::perspective(glm::radians(FOV), (float) width / (float) height, 0.1f, 100.0f);
-    glViewport(0, 0, width, height);
-    window->config.width  = width;
-    window->config.height = height;
-}
-
-void Camera3D::key_callback_fn(GLFWwindow *window, int key, int scan_code, int action, int mods) {
-}
 
 Camera3D::Camera3D(std::unique_ptr<Window> &window) : window(window), position(glm::vec3(0.0f)), up(glm::vec3(0.0f, 1.0f, 0.0f)), right(glm::vec3(0.0f)), front(glm::vec3(0.0f, 0.0f, -1.0f)), lastX(window->config.width / 2), lastY(window->config.height / 2), projection(glm::perspective(glm::radians(FOV), (float) window->config.width / window->config.height, 0.1f, 100.0f)) {
-    window->bind_func<Window::MouseInputCallbackFunc>([](GLFWwindow *window, double xpos, double ypos) {
-        Camera3D *cam = static_cast<Camera3D *>(glfwGetWindowUserPointer(window));
-        if (cam != nullptr)
-            cam->mouse_callback_fn(xpos, ypos);
-    });
-    window->bind_func<Window::FramebufferSizeCallbackFunc>([](GLFWwindow *window, int w, int h) {
-        Camera3D *cam = static_cast<Camera3D *>(glfwGetWindowUserPointer(window));
-        if (cam != nullptr)
-            cam->framebuffer_size_callback_fn(window, w, h);
-    });
-    window->bind_func<Window::KeyInputCallbackFunc>([](GLFWwindow *window, int k, int s, int a, int m) {
-        Camera3D *cam = static_cast<Camera3D *>(glfwGetWindowUserPointer(window));
-        if (cam != nullptr)
-            cam->key_callback_fn(window, k, s, a, m);
-    });
     update_cam_dirs();
 }
 

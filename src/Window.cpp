@@ -8,7 +8,7 @@
 Window::Window(Window::WindowConfig cfg) : config(cfg) {
 }
 
-Window::Window(const std::string &title, ui32 width, ui32 height, bool fullscreen) : config((Window::WindowConfig){ .title = title, .width = width, .height = height, .fullscreen = fullscreen }) {
+Window::Window(const std::string &title, ui32 width, ui32 height, bool fullscreen, bool raw) : config((Window::WindowConfig){ .title = title, .width = width, .height = height, .fullscreen = fullscreen, .raw = raw }) {
 }
 
 Window::~Window() {
@@ -147,26 +147,33 @@ void Window::initialize() {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return;
     }
-    stbi_set_flip_vertically_on_load(true);
 
     glfwGetFramebufferSize(window, (int *) &config.width, (int *) &config.height);
+    std::cout << config.width << config.height << std::endl;
+
+    glViewport(0, 0, config.width, config.height);
+
+    stbi_set_flip_vertically_on_load(true);
 
     glEnable(GL_DEPTH_TEST);
 
-    IMGUI_CHECKVERSION();
+    if (!config.raw) {
 
-    ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-    (void) io;
-    embraceTheDarkness();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
+        IMGUI_CHECKVERSION();
 
-    ImFont *font = io.Fonts->AddFontFromFileTTF("../res/fonts/Roboto-Medium.ttf", 16.0f);
-    if (font == NULL)
-        return;
+        ImGui::CreateContext();
+        ImGuiIO &io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+        (void) io;
+        embraceTheDarkness();
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        ImGui_ImplOpenGL3_Init("#version 330");
+
+        ImFont *font = io.Fonts->AddFontFromFileTTF("../res/fonts/Roboto-Medium.ttf", 16.0f);
+        if (font == NULL)
+            return;
+    }
 }
 
 void Window::update() {
@@ -185,13 +192,15 @@ void Window::update() {
 }
 
 void Window::post_update() {
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    if (!config.raw) {
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-    if (const ImGuiIO &io = ImGui::GetIO(); io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-        GLFWwindow *backup_current_context = glfwGetCurrentContext();
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
-        glfwMakeContextCurrent(backup_current_context);
+        if (const ImGuiIO &io = ImGui::GetIO(); io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+            GLFWwindow *backup_current_context = glfwGetCurrentContext();
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+            glfwMakeContextCurrent(backup_current_context);
+        }
     }
 
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved
