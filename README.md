@@ -1,13 +1,29 @@
 Engine type of thing that is built while learning OpenGL.
 The code may be trash rn, because I don't like C++ ZMANG!
 
-Mandelbrot Set:
+Features:
 
-![ZMANGUS XDDD](gallery/giphy.gif)
+* Skybox + Environment Mapping Reflections/Refractions
+![wegojim](gallery/env_mapping.jpeg)
 
-Sponza Model with ImGui:
-![Sponza Model + point lights](gallery/example.jpeg)
-xdd
+* Phong Lightnin with Forward Rendering with ImGui
+![sigmallionare](gallery/multiple_lights.jpeg)
+
+Project Roadmap (in order)
+* Batch Rendering
+* Instancing
+* PBR implementation
+* Organizing code (very important since the code is shit)
+* Shadows
+* Normal/Parallax Mapping
+* Support for Geometry Shaders
+* HDR/Bloom
+* Deferred Renderer (replace with Tiled Forward or Clustered Forward in the future)
+* Support for Compute Shaders
+* Atmospheric Scattering
+* Volumetric Clouds
+* Terrain Rendering / Tesellation Shaders
+* Animation
 
 made possible thanks to learnopengl.com.
 
@@ -29,4 +45,10 @@ Also the script will generate the necessary build files both in `Release` and `D
 
 Once you have made your app, you can go to `src/main.cpp` and instantiate your app.
 
-Note: obj models are not included in this repo so good luck on finding them ZMAAANG!!!! xdd
+Note: obj models and some texture files are not included in this repo so good luck on finding them ZMAAANG!!!! xdd
+
+Example Apps:
+
+Mandelbrot Set:
+
+![ZMANGUS XDDD](gallery/giphy.gif)
