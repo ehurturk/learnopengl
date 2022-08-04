@@ -149,7 +149,6 @@ void Window::initialize() {
     }
 
     glfwGetFramebufferSize(window, (int *) &config.width, (int *) &config.height);
-    std::cout << config.width << config.height << std::endl;
 
     glViewport(0, 0, config.width, config.height);
 

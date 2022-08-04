@@ -23,9 +23,7 @@ void Model::load_model(const std::string &path) {
     }
 
     directory = path.substr(0, path.find_last_of("/"));
-    std::cout << "load_model(" << path << ")" << std::endl;
     process_node(scene->mRootNode, scene);
-    std::cout << meshes.size() << std::endl;
 }
 
 void Model::process_node(aiNode *node, const aiScene *scene) {
@@ -110,5 +108,6 @@ std::vector<Texture> Model::load_material_textures(aiMaterial *mat, aiTextureTyp
             textures_loaded.push_back(tex);
         }
     }
+
     return textures;
 }

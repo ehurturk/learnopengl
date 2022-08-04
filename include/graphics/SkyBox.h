@@ -15,6 +15,8 @@ public:
     void draw();
     void load_faces(const std::array<const char *, 6> &faces);
 
+    inline unsigned int get_id() { return id; }
+
 private:
     unsigned int id;
     unsigned int vao, vbo;

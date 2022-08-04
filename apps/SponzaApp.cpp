@@ -1,6 +1,7 @@
 #include "SponzaApp.hpp"
 #include "Engine.hpp"
 #include "Resource.hpp"
+#include "glm/ext/matrix_transform.hpp"
 #include "imgui.h"
 #include "imgui_internal.h"
 #include <memory>
@@ -10,27 +11,39 @@
 void SponzaApp::start() {
     skybox = new SkyBox();
     phong_shader.create();
+    reflection_shader.create();
+    light_shader.create();
 
     phong_shader.load_shader("../res/shaders/cube.vs", Shader::ShaderType::VERTEX_SHADER);
     phong_shader.load_shader("../res/shaders/cube.fs", Shader::ShaderType::FRAGMENT_SHADER);
 
+    reflection_shader.load_shader("../res/shaders/env_mapping.vs", Shader::ShaderType::VERTEX_SHADER);
+    reflection_shader.load_shader("../res/shaders/env_mapping.fs", Shader::ShaderType::FRAGMENT_SHADER);
+
+    light_shader.load_shader("../res/shaders/light.vs", Shader::ShaderType::VERTEX_SHADER);
+    light_shader.load_shader("../res/shaders/light.fs", Shader::ShaderType::FRAGMENT_SHADER);
+
     stbi_set_flip_vertically_on_load(false);
-    backpack.load_model("../res/models/globe-sphere/globe-sphere.obj");
+    // earth.load_model("../res/models/globe-sphere/globe-sphere.obj");
+    earth.load_model("../res/models/teapot/teapot.obj");
     stbi_set_flip_vertically_on_load(true);
 
     stbi_set_flip_vertically_on_load(false);
     sponza.load_model("../res/models/sponza/Sponza.gltf");
     stbi_set_flip_vertically_on_load(true);
 
+    light_sphere.load_model("../res/models/globe-sphere/globe-sphere.obj");
+
     phong_shader.set_uniform_block_binding("Matrices", 0);
+    light_shader.set_uniform_block_binding("Matrices", 0);
 
     std::array<const char *, 6> faces = {
-        "../res/skyboxes/water/right.jpg",
-        "../res/skyboxes/water/left.jpg",
-        "../res/skyboxes/water/top.jpg",
-        "../res/skyboxes/water/bottom.jpg",
-        "../res/skyboxes/water/front.jpg",
-        "../res/skyboxes/water/back.jpg"
+        "../res/skyboxes/city/right.jpg",
+        "../res/skyboxes/city/left.jpg",
+        "../res/skyboxes/city/top.jpg",
+        "../res/skyboxes/city/bottom.jpg",
+        "../res/skyboxes/city/front.jpg",
+        "../res/skyboxes/city/back.jpg"
     };
 
     stbi_set_flip_vertically_on_load(false);
@@ -72,62 +85,100 @@ void SponzaApp::update(float dt) {
         phong_shader.setFloat(quad.c_str(), 0.032f);
     }
 
-    for (unsigned int i = 0; i < ARR_SIZE(backpack_positions); i++) {
-        // calculate the model matrix for each object and pass it to shader before drawing
-        glm::mat4 model = glm::mat4(1.0f);
-        model           = glm::translate(model, backpack_positions[i]);
-        float angle     = 20.0f * i;
-        model           = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-        // model           = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
-        phong_shader.setMat4("model", model);
-        phong_shader.setMat3("model_corrected", glm::mat3(glm::transpose(glm::inverse(model))));
-        backpack.draw(phong_shader);
-    }
     glm::mat4 sponza_model = glm::mat4(1.0f);
     sponza_model           = glm::translate(sponza_model, glm::vec3(0, -2.5f, 0));
-    sponza_model           = glm::scale(sponza_model, glm::vec3(0.02f, 0.02f, 0.02f));
+    sponza_model           = glm::scale(sponza_model, glm::vec3(0.01f, 0.01f, 0.01f));
     phong_shader.setMat4("model", sponza_model);
     phong_shader.setMat3("model_corrected", glm::mat3(glm::transpose(glm::inverse(sponza_model))));
     sponza.draw(phong_shader);
 
-    // NOTE: DRaw the skybox last
+    reflection_shader.use();
+    reflection_shader.setVec3("cam_pos", Engine::Get().get_subsystem<Camera3D>()->position);
+    for (unsigned int i = 0; i < ARR_SIZE(earth_positions); i++) {
+        // calculate the model matrix for each object and pass it to shader before drawing
+        glm::mat4 model = glm::mat4(1.0f);
+        model           = glm::translate(model, earth_positions[i]);
+        model           = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+        reflection_shader.setMat4("model", model);
+        reflection_shader.setMat3("model_corrected", glm::mat3(glm::transpose(glm::inverse(model))));
+        glActiveTexture(GL_TEXTURE0 + 1);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, skybox->get_id());
+        reflection_shader.setInt("skybox", 1);
+        earth.draw(reflection_shader);
+    }
+
+    light_shader.use();
+    if (draw_lights) {
+        for (unsigned int i = 0; i < ARR_SIZE(pointLightPositions); i++) {
+            glm::mat4 model = glm::mat4(1.0f);
+            model           = glm::translate(model, pointLightPositions[i]);
+            model           = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+            light_shader.setMat4("model", model);
+            light_shader.setVec3("color", pointLightColors[i]);
+            light_sphere.draw(light_shader);
+        }
+    }
+
+
+    // NOTE: Draw the skybox last
     skybox->draw();
 }
 
-SponzaApp::~SponzaApp() { delete skybox; }
+SponzaApp::~SponzaApp() {
+    delete skybox;
+}
 
 void SponzaApp::imgui_update() {
+#pragma region EDITOR_PANEL
     /**================================================== *
      * ==========  Editor Inspector Panel  ========== *
      * ================================================== */
-    static glm::vec4 my_color;
-    ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
-    if (ImGui::BeginMenuBar()) {
-        if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("Close", "Ctrl+W")) { my_tool_active = false; }
-            ImGui::EndMenu();
-        }
-        ImGui::EndMenuBar();
-    }
-    ImGui::ColorEdit4("Color", glm::value_ptr(my_color));
 
-    for (int i = 0; i < ARR_SIZE(backpack_positions); i++) {
-        ImGui::PushID(i);
-        ImGui::Text("Sphere %d", i + 1);
-        ImGui::DragFloat3("Position", glm::value_ptr(backpack_positions[i]));
-        ImGui::Separator();
-        ImGui::PopID();
+    ImGui::Begin("Inspector", &my_tool_active);
+
+    if (ImGui::TreeNode("Entities")) {
+        for (int i = 0; i < ARR_SIZE(earth_positions); i++) {
+            ImGui::PushID((std::string("entity_info_") + std::to_string(i)).c_str());
+            ImGui::Text("Sphere %d", i + 1);
+            ImGui::DragFloat3("Position", glm::value_ptr(earth_positions[i]));
+            ImGui::Separator();
+            ImGui::PopID();
+        }
+        ImGui::TreePop();
     }
+
+    if (ImGui::TreeNode("Lights")) {
+        for (int i = 0; i < ARR_SIZE(pointLightPositions); i++) {
+            ImGui::PushID((std::string("p_light_info_") + std::to_string(i)).c_str());
+            ImGui::Text("Point Light %d", i + 1);
+            ImGui::DragFloat3("Position", glm::value_ptr(pointLightPositions[i]));
+            ImGui::ColorEdit4("Color", glm::value_ptr(pointLightColors[i]));
+            ImGui::Separator();
+            ImGui::PopID();
+        }
+        ImGui::TreePop();
+    }
+
+    ImGui::Checkbox("Draw Lights", &draw_lights);
+
+    ImGui::Separator();
+    ImGui::Text("Controls:");
+    ImGui::Text("Move with WASD");
+    ImGui::Text("Rotate the camera with dragging the mouse");
+    ImGui::Text("K: Disable cursor");
+    ImGui::Text("J: Enable cursor");
 
     ImGui::End();
     /* =======  End of Editor Inspector Panel  ======= */
+#pragma endregion
 
+#pragma region STAT WINDOW
     /**================================================== *
      * ==========  Stat Window  ========== *
      * ================================================== */
     float fps = Engine::Get().get_subsystem<Window>()->get_fps(), ms = Engine::Get().get_subsystem<Window>()->get_ms_per_frame();
     static bool p_open            = true;
-    static int corner             = 3;
+    static int corner             = 2;
     ImGuiIO &io                   = ImGui::GetIO();
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
     if (corner != -1) {
@@ -167,8 +218,7 @@ void SponzaApp::imgui_update() {
     }
     ImGui::End();
     /* =======  End of Stat Window  ======= */
-
-    // ImGui::End();
+#pragma endregion
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this
@@ -194,6 +244,4 @@ void SponzaApp::process_input(float dt) {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
-        my_tool_active = true;
 }

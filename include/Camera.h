@@ -25,6 +25,8 @@ public:
     void mouse_callback_fn(double x, double y);
     void key_callback_fn(int key, int scan_code, int action, int mods);
 
+    bool firstTimeEntered = true;
+
 protected:
     std::unique_ptr<Window> &window;
 
@@ -38,6 +40,5 @@ protected:
     void update_cam_dirs();
 
 private:
-    bool firstTimeEntered = true;
     float lastX, lastY;
 };

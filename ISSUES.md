@@ -18,6 +18,8 @@
 
 ****************************
 10) VERY IMPORTANT!!!!!!!!!! MANAGE APP MEMBER FUNCTION SEG FAULT??
+11) MATERIAL CLASS AND SHADER!!
+    1)  e.g: cube.set_material(mat);
 *****************************
 
 IDK MAN THIS WHOLE IMGUI THING SEEMS LIKE A TRASH

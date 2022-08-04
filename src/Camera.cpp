@@ -5,9 +5,10 @@ void Camera3D::mouse_callback_fn(double xpos, double ypos) {
     //     return;
     // }
 
-    // if (glfwGetMouseButton(window->get_raw_window(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
-    //     return;
-    // }
+    if (glfwGetMouseButton(window->get_raw_window(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
+        return;
+    }
+
     if (firstTimeEntered) {
         lastX            = xpos;
         lastY            = ypos;
@@ -44,7 +45,7 @@ void Camera3D::adjust_viewport(int width, int height) {
 }
 
 
-Camera3D::Camera3D(std::unique_ptr<Window> &window) : window(window), position(glm::vec3(0.0f)), up(glm::vec3(0.0f, 1.0f, 0.0f)), right(glm::vec3(0.0f)), front(glm::vec3(0.0f, 0.0f, -1.0f)), lastX(window->config.width / 2), lastY(window->config.height / 2), projection(glm::perspective(glm::radians(FOV), (float) window->config.width / window->config.height, 0.1f, 100.0f)) {
+Camera3D::Camera3D(std::unique_ptr<Window> &window) : window(window), position(glm::vec3(0.0f)), up(glm::vec3(0.0f, 1.0f, 0.0f)), right(glm::vec3(0.0f)), front(glm::vec3(0.0f, 0.0f, -1.0f)), lastX((float) window->config.width / 2.0f), lastY((float) window->config.height / 2.0f), projection(glm::perspective(glm::radians(FOV), (float) window->config.width / window->config.height, 0.1f, 100.0f)) {
     update_cam_dirs();
 }
 
