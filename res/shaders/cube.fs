@@ -36,9 +36,8 @@ struct PointLight {
 uniform Material material;
 uniform DirectionalLight directional_light;
 
-#define NR_POINT_LIGHTS 4
+#define NR_POINT_LIGHTS 2
 uniform PointLight point_lights[NR_POINT_LIGHTS];
-
 
 uniform vec3 cam_pos;
 
@@ -46,8 +45,10 @@ vec3 calculate_directional_light(DirectionalLight light, vec3 normal, vec3 viewD
     vec3 lightDir          = normalize(-light.direction);
     vec3 reflect_direction = reflect(-lightDir, normal);
 
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+
     float diff = max(dot(normal, lightDir), 0.0);
-    float spec = pow(max(dot(viewDir, reflect_direction), 0.0), material.shininess);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
     float amb  = 1.0f;
 
     vec3 ambient  = amb * light.ambient * texture(material.texture_diffuse1, TexCoords).rgb;
@@ -64,8 +65,10 @@ vec3 calculate_point_light(PointLight light, vec3 normal, vec3 fragPos, vec3 vie
     vec3 lightDir   = normalize(light.position - fragPos);
     vec3 reflectDir = reflect(-lightDir, normal);
 
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+
     float diff = max(dot(normal, lightDir), 0.0);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
     float amb  = 1.0;
 
     vec3 ambient           = amb * light.ambient * texture(material.texture_diffuse1, TexCoords).rgb;// ambiant strength (pixel value) * ambient color * diffuse map
@@ -93,6 +96,4 @@ void main() {
     FragColor = vec4(color, 1.0);
 }
 
-// TODO:
 // 1) Sort out Spotlight
-// 2) Learn what all the vec3 values for ambient, diffuse, and specular means. My guess here is they are the color but I may be wrong.
