@@ -95,4 +95,3 @@ void main() {
 
 // TODO:
 // 1) Sort out Spotlight
-// 2) Learn what all the vec3 values for ambient, diffuse, and specular means. My guess here is they are the color but I may be wrong.
