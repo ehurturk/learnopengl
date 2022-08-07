@@ -248,8 +248,7 @@ void Engine::start() {
     }
 
     quad_shader.create();
-    quad_shader.load_shader("../res/shaders/framebuffer_quad.vs", Shader::ShaderType::VERTEX_SHADER);
-    quad_shader.load_shader("../res/shaders/framebuffer_quad.fs", Shader::ShaderType::FRAGMENT_SHADER);
+    quad_shader.load_shader("../res/shaders/framebuffer_quad.glsl");
 
     quad_shader.use();
     quad_shader.setInt("tex", 0);

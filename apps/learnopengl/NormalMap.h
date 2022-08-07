@@ -1,19 +1,25 @@
 #pragma once
 
 #include "Engine.hpp"
+#include "Quark.hpp"
+#include "graphics/SkyBox.h"
 
-class StencilTest : public Application {
+class NormalMap : public Application {
 public:
-    StencilTest();
-    ~StencilTest();
+    NormalMap();
+    ~NormalMap();
 
-    // Executed when beginning the app
+    // Executed on initialization
     void start() override;
     // Executed each frame
     void update(float dt) override;
     // Executed each frame for UI
     void imgui_update() override;
 
+    // Additional functions...
 private:
     // All private variables...
+    Shader normal_shader;
+    SkyBox box;
+    Model car;
 };

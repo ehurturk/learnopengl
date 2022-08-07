@@ -14,14 +14,9 @@ void SponzaApp::start() {
     reflection_shader.create();
     light_shader.create();
 
-    phong_shader.load_shader("../res/shaders/cube.vs", Shader::ShaderType::VERTEX_SHADER);
-    phong_shader.load_shader("../res/shaders/cube.fs", Shader::ShaderType::FRAGMENT_SHADER);
-
-    reflection_shader.load_shader("../res/shaders/env_mapping.vs", Shader::ShaderType::VERTEX_SHADER);
-    reflection_shader.load_shader("../res/shaders/env_mapping.fs", Shader::ShaderType::FRAGMENT_SHADER);
-
-    light_shader.load_shader("../res/shaders/light.vs", Shader::ShaderType::VERTEX_SHADER);
-    light_shader.load_shader("../res/shaders/light.fs", Shader::ShaderType::FRAGMENT_SHADER);
+    phong_shader.load_shader("../res/shaders/cube.glsl");
+    reflection_shader.load_shader("../res/shaders/env_mapping.glsl");
+    light_shader.load_shader("../res/shaders/light.glsl");
 
     stbi_set_flip_vertically_on_load(false);
     // earth.load_model("../res/models/globe-sphere/globe-sphere.obj");

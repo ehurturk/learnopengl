@@ -14,7 +14,7 @@
 
 class Shader {
 public:
-    enum ShaderType {
+    enum class ShaderType {
         VERTEX_SHADER,
         FRAGMENT_SHADER
     };
@@ -25,7 +25,7 @@ public:
     ~Shader();
 
     void create();
-    void load_shader(const char *path, ShaderType type);
+    void load_shader(const char *path);
     // activate the shader
     // ------------------------------------------------------------------------
     void use();

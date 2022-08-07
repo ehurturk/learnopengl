@@ -34,8 +34,7 @@ void Mandelbrot::start() {
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-    mandelbrot_shader.load_shader("../res/shaders/mandelbrot.vs", Shader::ShaderType::VERTEX_SHADER);
-    mandelbrot_shader.load_shader("../res/shaders/mandelbrot.fs", Shader::ShaderType::FRAGMENT_SHADER);
+    mandelbrot_shader.load_shader("../res/shaders/mandelbrot.glsl");
 
     scr_width  = Engine::Get().get_subsystem<Window>()->config.width;
     scr_height = Engine::Get().get_subsystem<Window>()->config.height;

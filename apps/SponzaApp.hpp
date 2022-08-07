@@ -34,11 +34,10 @@ private:
     glm::vec3 colorRed    = glm::vec3(1.0f, 0.0f, 0.0f);
     glm::vec3 colorYellow = glm::vec3(0.0f, 1.0f, 1.0f);
 
-    glm::vec3 pointLightColors[2] = { colorWhite, colorGreen };
+    glm::vec3 pointLightColors[1] = { colorWhite };
 
-    glm::vec3 pointLightPositions[2] = {
-        glm::vec3(0.0f, 0.0f, -3.0f),
-        glm::vec3(1.0f, 0.0f, 0.0f),
+    glm::vec3 pointLightPositions[1] = {
+        glm::vec3(2.0f, -2.0f, -0.5f),
     };
 
     glm::vec3 earth_positions[3] = {

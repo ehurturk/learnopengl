@@ -1,6 +1,6 @@
 #include "Engine.hpp"
 #include "../apps/SponzaApp.hpp"
-#include "../apps/Mandelbrot.hpp"
+#include "../apps/learnopengl/NormalMap.h"
 #include <cstdlib>
 #include <memory>
 

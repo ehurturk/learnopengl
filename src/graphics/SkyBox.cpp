@@ -2,8 +2,7 @@
 
 SkyBox::SkyBox() {
     shader.create();
-    shader.load_shader("../res/shaders/skybox.vs", Shader::ShaderType::VERTEX_SHADER);
-    shader.load_shader("../res/shaders/skybox.fs", Shader::ShaderType::FRAGMENT_SHADER);
+    shader.load_shader("../res/shaders/skybox.glsl");
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
