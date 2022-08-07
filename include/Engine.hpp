@@ -22,6 +22,7 @@
 #include "common.h"
 #include "Application.hpp"
 #include "graphics/UniformBuffer.hpp"
+#include "graphics/Framebuffer.h"
 
 // forward declerations
 
@@ -61,11 +62,11 @@ private:
     AppConfig cfg;
     std::unique_ptr<Window> m_Window;
     std::unique_ptr<Camera3D> m_Camera;
-    /* std::stack<std::unique_ptr<EngineSystem>> systems; */
-    /* for system in systems system->start(); */
-    /* for system in systems system->update(dt); */
+
     Application *m_App;
+
     UniformBuffer m_UniformBuffer;
+    Framebuffer m_Framebuffer;
 
     float quad_vertices[24] = {
         -1.0f, 1.0f, 0.0f, 1.0f,

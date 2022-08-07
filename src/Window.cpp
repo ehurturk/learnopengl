@@ -149,7 +149,6 @@ void Window::initialize() {
     }
 
     glfwGetFramebufferSize(window, (int *) &config.width, (int *) &config.height);
-
     glViewport(0, 0, config.width, config.height);
 
     stbi_set_flip_vertically_on_load(true);

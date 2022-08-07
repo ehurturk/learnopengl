@@ -22,4 +22,6 @@
     1)  e.g: cube.set_material(mat);
 *****************************
 
+THIS APP IS FUCKING SLOW WITH --RELEASE BUT OK WITH IMGUI WHY THE FUCK?
+
 IDK MAN THIS WHOLE IMGUI THING SEEMS LIKE A TRASH

@@ -18,14 +18,8 @@ float lt = 0.0f;
 
 bool my_tool_active = false;
 
-unsigned int framebuffer;
-unsigned int tex_color;
-unsigned int rbo;
-
 float viewport_x = 0.0f;
 float viewport_y = 0.0f;
-
-void resize_framebuffer(int, int);
 
 struct GlobalUniformData {
     glm::mat4 projview;
@@ -42,9 +36,6 @@ Engine::~Engine() {
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
     }
-    glDeleteFramebuffers(1, &framebuffer);
-    glDeleteTextures(1, &tex_color);
-    glDeleteRenderbuffers(1, &rbo);
 
     glDeleteVertexArrays(1, &qvao);
     glDeleteBuffers(1, &qvbo);
@@ -61,7 +52,7 @@ void Engine::update() {
         m_Window->update();
         m_Camera->update();
 
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        m_Framebuffer.bind();
         glEnable(GL_DEPTH_TEST);
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -162,9 +153,9 @@ void Engine::update() {
                     viewport_y = wsize.y;
                     // TODO: New framebuffer here
                     m_Camera->adjust_viewport(viewport_x, viewport_y);
-                    resize_framebuffer(viewport_x, viewport_y);
+                    m_Framebuffer.resize(viewport_x, viewport_y);
                 }
-                ImGui::Image((ImTextureID) tex_color, wsize, ImVec2(0, 1), ImVec2(1, 0));
+                ImGui::Image((ImTextureID) m_Framebuffer.get_texture(), wsize, ImVec2(0, 1), ImVec2(1, 0));
             }
             ImGui::End();
             ImGui::PopStyleVar();
@@ -186,7 +177,7 @@ void Engine::update() {
             glClear(GL_COLOR_BUFFER_BIT);
             quad_shader.use();
             glBindVertexArray(qvao);
-            glBindTexture(GL_TEXTURE_2D, tex_color);// use the color attachment texture as the texture of the quad plane
+            glBindTexture(GL_TEXTURE_2D, m_Framebuffer.get_texture());// use the color attachment texture as the texture of the quad plane
             glDrawArrays(GL_TRIANGLES, 0, 6);
         }
 
@@ -196,7 +187,7 @@ void Engine::update() {
 
 void Engine::framebuffer_callback_fn(GLFWwindow *window, int w, int h) {
     m_Camera->adjust_viewport(w, h);
-    resize_framebuffer(w, h);
+    m_Framebuffer.resize(w, h);
 }
 
 void Engine::mouse_input_callback_fn(GLFWwindow *window, double xpos, double ypos) {
@@ -208,9 +199,6 @@ void Engine::key_input_callback_fn(GLFWwindow *window, int key, int scan, int ac
 }
 
 void Engine::start() {
-
-    std::cout << cfg.title << std::endl;
-
     m_Window = std::make_unique<Window>(cfg.title, cfg.width, cfg.height, cfg.fullscreen, cfg.raw);
     m_Camera = std::make_unique<Camera3D>(m_Window);
 
@@ -235,7 +223,6 @@ void Engine::start() {
     m_Window->initialize();
     m_Window->set_window_user_pointer(static_cast<void *>(instance.get()));
 
-
     // init uniform buffer for global shader uniforms
     m_UniformBuffer = UniformBuffer();
     m_UniformBuffer.init(1 * sizeof(glm::mat4));
@@ -243,24 +230,10 @@ void Engine::start() {
     /* alternatively, one can use .bind(0, offset, size) to bind specific portion of data */
     /* binding specific region of data is especially useful when an UBO is being used as a buffer of all uniforms, and one can easily select a specific part of the buffer to load in the uniforms.*/
 
-    glGenFramebuffers(1, &framebuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-    // create a color attachment texture
-    glGenTextures(1, &tex_color);
-    glBindTexture(GL_TEXTURE_2D, tex_color);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_Window->config.width, m_Window->config.height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex_color, 0);
-    // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
-    glGenRenderbuffers(1, &rbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Window->config.width, m_Window->config.height);// use a single renderbuffer object for both a depth AND stencil buffer.
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);                // now actually attach it
-    // now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    m_Framebuffer.init(m_Window->config.width, m_Window->config.height);
+    m_Framebuffer.add_spec(Framebuffer::FramebufferSpec::TEXTURE);
+    m_Framebuffer.add_spec(Framebuffer::FramebufferSpec::DEPTH24STENCIL8);
+    m_Framebuffer.create();
 
     if (cfg.raw) {
         glGenVertexArrays(1, &qvao);
@@ -282,27 +255,4 @@ void Engine::start() {
     quad_shader.setInt("tex", 0);
 
     m_App->start();
-}
-
-void resize_framebuffer(int width, int height) {
-    framebuffer = 0;
-    glGenFramebuffers(1, &framebuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-    glGenTextures(1, &tex_color);
-    glBindTexture(GL_TEXTURE_2D, tex_color);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex_color, 0);
-
-    glGenRenderbuffers(1, &rbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

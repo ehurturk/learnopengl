@@ -50,5 +50,5 @@ private:
     };
 
     bool my_tool_active = false;
-    bool draw_lights    = true;
+    bool draw_lights    = false;
 };
