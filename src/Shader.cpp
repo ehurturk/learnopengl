@@ -43,22 +43,24 @@ void Shader::load_shader(const char *path) {
         else if (cur_type == 1 && line != "<FRAGMENT>")
             fragment << line << "\n";
     }
+    vertex << "\0";
+    fragment << "\0";
     file.close();
 
 
-    std::string vertex_code = vertex.str();
-    std::string frag_code   = fragment.str();
+    std::string vertex_code = vertex.str().c_str();
+    std::string frag_code   = fragment.str().c_str();
 
-    const char *v_code = vertex_code.c_str();
-    const char *f_code = frag_code.c_str();
+    const GLchar *vcode = vertex_code.c_str();
+    const GLchar *fcode = frag_code.c_str();
 
     ui32 vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader_id, 1, &v_code, NULL);
+    glShaderSource(vertex_shader_id, 1, &vcode, NULL);
     glCompileShader(vertex_shader_id);
     checkCompileErrors(vertex_shader_id, "VERTEX");
     glAttachShader(ID, vertex_shader_id);
     ui32 frag_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(frag_shader_id, 1, &f_code, NULL);
+    glShaderSource(frag_shader_id, 1, &fcode, NULL);
     glCompileShader(frag_shader_id);
     checkCompileErrors(frag_shader_id, "FRAGMENT");
     glAttachShader(ID, frag_shader_id);

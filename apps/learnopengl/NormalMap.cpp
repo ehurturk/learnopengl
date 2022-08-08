@@ -1,10 +1,12 @@
 #include "NormalMap.h"
+#include "glm/ext/matrix_transform.hpp"
 
 NormalMap::NormalMap() : Application("NormalMap", 800, 600) {}
-NormalMap::~NormalMap() {}
+NormalMap::~NormalMap() { delete box; }
 
 void NormalMap::start() {
     // Executed on initialization
+    box = new SkyBox();
     normal_shader.create();
     std::array<const char *, 6> faces = {
         "../res/skyboxes/city/right.jpg",
@@ -14,25 +16,32 @@ void NormalMap::start() {
         "../res/skyboxes/city/front.jpg",
         "../res/skyboxes/city/back.jpg"
     };
+
     stbi_set_flip_vertically_on_load(false);
-    box.load_faces(faces);
+    box->load_faces(faces);
     stbi_set_flip_vertically_on_load(true);
 
-    normal_shader.load_shader("../res/shaders/normal.glsl");
-
-    normal_shader.set_uniform_block_binding("matrices", 0);
+    normal_shader.load_shader("../res/shaders/normal_mapping.glsl");
+    normal_shader.set_uniform_block_binding("Matrices", 0);
 
     stbi_set_flip_vertically_on_load(false);
-    car.load_model("../res/models/car/source/car.fbx");
+    car.load_model("../res/models/sedan/sedan.obj");
     stbi_set_flip_vertically_on_load(true);
 }
 
 void NormalMap::update(float dt) {
     // Executed each frame
+    process_input(dt);
+
     normal_shader.use();
+    glm::mat4 model = glm::mat4(1.0f);
+    // model                     = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
+    glm::mat4 model_corrected = glm::transpose(glm::inverse(model));
+    normal_shader.setMat4("model", model);
+    // normal_shader.setMat4("model_corrected", model_corrected);
     car.draw(normal_shader);
 
-    box.draw();
+    box->draw();
 }
 
 void NormalMap::imgui_update() {
@@ -84,4 +93,26 @@ void NormalMap::imgui_update() {
     ImGui::End();
     /* =======  End of Stat Window  ======= */
 #pragma endregion
+}
+
+void NormalMap::process_input(float dt) {
+    GLFWwindow *window             = Engine::Get().get_subsystem<Window>()->get_raw_window();
+    std::unique_ptr<Camera3D> &cam = Engine::Get().get_subsystem<Camera3D>();
+    float speed                    = 8.f * dt;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        speed *= 1.5f;
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        cam->position += speed * cam->front;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        cam->position -= speed * cam->front;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        cam->position -= speed * glm::normalize(glm::cross(cam->front, cam->up));
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        cam->position += speed * glm::normalize(glm::cross(cam->front, cam->up));
+    if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }

@@ -4,9 +4,4 @@ goal.cc
 Release
 Debug
 TODO.md
-res/models/backpack/backpack.obj
-res/models/globe-sphere/globe-sphere.obj
-res/models/sponza/Sponza.gltf
-res/models/teapot/teapot.obj
-res/skyboxes/*
-res/models/car/*
+res/models/*

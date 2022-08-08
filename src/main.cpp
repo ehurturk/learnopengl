@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
 
     Engine &engine = Engine::Get();
 
-    auto app      = std::make_shared<SponzaApp>();
+    auto app      = std::make_shared<NormalMap>();
     AppConfig cfg = app->get_config();
     if (argc == 2 && (strcmp(argv[1], "--release") == 0 || strcmp(argv[1], "-r") == 0)) {
         cfg.raw = true;

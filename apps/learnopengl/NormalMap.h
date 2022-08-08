@@ -17,9 +17,11 @@ public:
     void imgui_update() override;
 
     // Additional functions...
+    void process_input(float dt);
+
 private:
     // All private variables...
     Shader normal_shader;
-    SkyBox box;
+    SkyBox *box;
     Model car;
 };
