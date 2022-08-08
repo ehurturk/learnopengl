@@ -4,5 +4,5 @@ goal.cc
 Release
 Debug
 TODO.md
-res/models/*
-res/skyboxes/*
+res/models
+res/skyboxes
