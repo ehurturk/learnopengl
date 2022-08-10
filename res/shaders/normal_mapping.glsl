@@ -14,29 +14,44 @@ uniform mat4 model;
 uniform mat3 model_corrected;
 
 out vec3 Normal;
-out vec3 FragPos;
 out vec2 TexCoords;
-out mat3 TBN;
+
+#define NR_LIGHTS 2
+uniform vec3 light_pos[NR_LIGHTS];
+
+uniform vec3 directional_light_dir;
+
+out vec3 TangentLightPos[NR_LIGHTS];
+out vec3 TangentDirLightDir;
+out vec3 TangentViewPos;
+out vec3 TangentFragPos;
+
+uniform vec3 cam_pos;
 
 void main() {
     gl_Position = projview * model * vec4(aPos, 1.0);
-    FragPos     = vec3(model * vec4(aPos, 1.0f));
     Normal      = model_corrected * aNormal;
     TexCoords   = aTexCoords;
     
     vec3 T = normalize(vec3(model * vec4(aTangent,   0.0)));
-    vec3 B = normalize(vec3(model * vec4(aBitangent, 0.0)));
     vec3 N = normalize(vec3(model * vec4(aNormal,    0.0)));
-    TBN = mat3(T, B, N);
+    T = normalize(T - dot(T, N) * N);
+    vec3 B = cross(N, T);
+
+    mat3 TBN = transpose(mat3(T, B, N));
+    TangentViewPos = TBN * cam_pos;
+    vec3 FragPos     = vec3(model * vec4(aPos, 1.0f));
+    TangentFragPos = TBN * FragPos;
+    for (int i = 0; i < NR_LIGHTS; i++) 
+        TangentLightPos[i] = TBN * light_pos[i];
+    TangentDirLightDir = TBN * directional_light_dir;
 }
 
 <FRAGMENT>
 #version 330 core
 
 in vec3 Normal;
-in vec3 FragPos;
 in vec2 TexCoords;
-in mat3 TBN;
 
 out vec4 FragColor;
 
@@ -48,17 +63,13 @@ struct Material {
     float shininess;
 };
 
-struct DirectionalLight {
-    vec3 direction;
-
+struct DirectionalLight {    
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
 };
 
 struct PointLight {
-    vec3 position;
-
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -74,11 +85,15 @@ uniform DirectionalLight directional_light;
 #define NR_POINT_LIGHTS 2
 uniform PointLight point_lights[NR_POINT_LIGHTS];
 
-uniform vec3 cam_pos;
+in vec3 TangentLightPos[NR_POINT_LIGHTS];
+in vec3 TangentViewPos;
+in vec3 TangentFragPos;
+in vec3 TangentDirLightDir;
+
 uniform bool normal_enabled;
 
-vec3 calculate_directional_light(DirectionalLight light, vec3 normal, vec3 viewDir) {
-    vec3 lightDir          = normalize(-light.direction);
+vec3 calculate_directional_light(DirectionalLight light, vec3 normal, vec3 viewDir, vec3 tangent_dir) {
+    vec3 lightDir          = normalize(-tangent_dir);
     vec3 reflect_direction = reflect(-lightDir, normal);
 
     vec3 halfwayDir = normalize(lightDir + viewDir);
@@ -94,11 +109,11 @@ vec3 calculate_directional_light(DirectionalLight light, vec3 normal, vec3 viewD
     return ambient + diffuse + specular;
 }
 
-vec3 calculate_point_light(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
-    float distance    = length(light.position - fragPos);
+vec3 calculate_point_light(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 tangent_pos) {
+    float distance    = length(tangent_pos - fragPos);
     float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * pow(distance, 2));
 
-    vec3 lightDir   = normalize(light.position - fragPos);
+    vec3 lightDir   = normalize(tangent_pos - fragPos);
     vec3 reflectDir = reflect(-lightDir, normal);
 
     vec3 halfwayDir = normalize(lightDir + viewDir);
@@ -119,20 +134,22 @@ vec3 calculate_point_light(PointLight light, vec3 normal, vec3 fragPos, vec3 vie
 void main() {
     vec3 color = vec3(0.0f);
     vec3 norm = vec3(0.0f);
+    vec3 viewDir = vec3(0.0f);
 
     if (normal_enabled != true) 
         norm    = normalize(Normal);
     else {
         norm = texture(material.texture_normal1, TexCoords).rgb;
         norm = normalize(norm * 2.0 - 1.0);
-        norm = normalize(TBN * norm);
     }
-    vec3 viewDir = normalize(cam_pos - FragPos);
 
-    color += calculate_directional_light(directional_light, norm, viewDir);
+    viewDir = normalize(TangentViewPos - TangentFragPos);
 
-    for (int i = 0; i < NR_POINT_LIGHTS; i++)
-        color += calculate_point_light(point_lights[i], norm, FragPos, viewDir);
+    color += calculate_directional_light(directional_light, norm, viewDir, TangentDirLightDir);
+
+    for (int i = 0; i < NR_POINT_LIGHTS; i++) {
+        color += calculate_point_light(point_lights[i], norm, TangentFragPos, viewDir, TangentLightPos[i]);
+    }
 
     FragColor = vec4(color, 1.0);
 }

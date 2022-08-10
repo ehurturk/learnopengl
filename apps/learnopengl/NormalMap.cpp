@@ -12,12 +12,12 @@ void NormalMap::start() {
     normal_shader.create();
     light_source_shader.create();
     std::array<const char *, 6> faces = {
-        "../res/skyboxes/park/right.jpg",
-        "../res/skyboxes/park/left.jpg",
-        "../res/skyboxes/park/top.jpg",
-        "../res/skyboxes/park/bottom.jpg",
-        "../res/skyboxes/park/front.jpg",
-        "../res/skyboxes/park/back.jpg"
+        "../res/skyboxes/city/right.jpg",
+        "../res/skyboxes/city/left.jpg",
+        "../res/skyboxes/city/top.jpg",
+        "../res/skyboxes/city/bottom.jpg",
+        "../res/skyboxes/city/front.jpg",
+        "../res/skyboxes/city/back.jpg"
     };
 
     stbi_set_flip_vertically_on_load(false);
@@ -49,14 +49,14 @@ void NormalMap::update(float dt) {
     normal_shader.setFloat("material.shininess", 32.0f);
 
     // Directional light settings
-    normal_shader.setVec3("directional_light.direction", -0.2f, -1.0f, -0.3f);
+    normal_shader.setVec3("directional_light_dir", -0.2f, -1.0f, -0.3f);// for tangent space calculation
     normal_shader.setVec3("directional_light.ambient", 0.05f, 0.05f, 0.05f);
     normal_shader.setVec3("directional_light.diffuse", 0.4f, 0.4f, 0.4f);
     normal_shader.setVec3("directional_light.specular", 1.0f, 1.0f, 1.0f);
 
     // Point light settings
     for (int i = 0; i < ARR_SIZE(light_pos); i++) {
-        std::string pos      = "point_lights[" + std::to_string(i) + "].position";
+        std::string pos      = "light_pos[" + std::to_string(i) + "]";// for tangent space calculation
         std::string am       = "point_lights[" + std::to_string(i) + "].ambient";
         std::string diff     = "point_lights[" + std::to_string(i) + "].diffuse";
         std::string spec     = "point_lights[" + std::to_string(i) + "].specular";

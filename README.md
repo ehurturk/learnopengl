@@ -6,7 +6,7 @@ Features:
 * Skybox + Environment Mapping Reflections/Refractions
 ![wegojim](gallery/env_mapping.jpeg)
 
-* Phong Lightning with Forward Rendering with ImGui
+* Phong Lighting with Forward Rendering with ImGui
 ![sigmallionare](gallery/multiple_lights.jpeg)
 
 Normal Map Disabled             |  Normal Map Enabled
