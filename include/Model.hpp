@@ -18,8 +18,13 @@ public:
     void load_model(const std::string &path);
 
 private:
-    void process_node(aiNode *node, const aiScene *scene);
-    Mesh process_mesh(aiMesh *mesh, const aiScene *scene);
+    enum class ModelType {
+        UNKNOWN = -1,
+        OBJ,
+        GLTF,
+    };
+    void process_node(aiNode *node, const aiScene *scene, ModelType type);
+    Mesh process_mesh(aiMesh *mesh, const aiScene *scene, ModelType type);
     std::vector<Texture> load_material_textures(aiMaterial *mat, aiTextureType type,
                                                 Texture::TextureType tex_type);
 

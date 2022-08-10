@@ -45,6 +45,12 @@ Texture ResourceManager::load_ogl_texture_from_path(const std::string &path, con
         case Texture::TextureType::EMISSION:
             tex.type = "texture_emission";
             break;
+        case Texture::TextureType::NORMAL:
+            tex.type = "texture_normal";
+            break;
+        case Texture::TextureType::HEIGHT:
+            tex.type = "texture_height";
+            break;
     }
 
     return tex;

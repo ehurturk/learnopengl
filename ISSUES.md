@@ -16,6 +16,8 @@
    4) However, I can create another framebuffer and texture with the same width and height of the viewport, and then render the entire texture into it with it's own post processing shader and then render ImGui::Image passing the 2nd texture value with its shaders.
 9) STBI FLIP VERTICALLY ON TRUE GETTING OUT OF HAND
 
+!!!!!!! very very IMPORTANTTT: Framebuffer size of viewport changes when the window is moved.
+
 ****************************
 10) VERY IMPORTANT!!!!!!!!!! MANAGE APP MEMBER FUNCTION SEG FAULT??
 11) MATERIAL CLASS AND SHADER!!

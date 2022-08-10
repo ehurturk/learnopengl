@@ -6,8 +6,12 @@ Features:
 * Skybox + Environment Mapping Reflections/Refractions
 ![wegojim](gallery/env_mapping.jpeg)
 
-* Phong Lightnin with Forward Rendering with ImGui
+* Phong Lightning with Forward Rendering with ImGui
 ![sigmallionare](gallery/multiple_lights.jpeg)
+
+Normal Map Disabled             |  Normal Map Enabled
+:-------------------------:|:-------------------------:
+![grind](gallery/no_normal_map.jpeg)  |  ![](gallery/yes_normal_map.jpeg)
 
 Project Roadmap (in order)
 * Batch Rendering
@@ -15,7 +19,8 @@ Project Roadmap (in order)
 * PBR implementation
 * Organizing code (very important since the code is shit)
 * Shadows
-* Normal/Parallax Mapping
+* ~~Normal Mapping~~
+* Parallax Mapping
 * Support for Geometry Shaders
 * HDR/Bloom
 * Deferred Renderer (replace with Tiled Forward or Clustered Forward in the future)
@@ -45,7 +50,8 @@ Also the script will generate the necessary build files both in `Release` and `D
 
 Once you have made your app, you can go to `src/main.cpp` and instantiate your app.
 
-Note: obj models and some texture files are not included in this repo so good luck on finding them ZMAAANG!!!! xdd
+Note: 
+`res/models` folder is not included in this repo since the files are too large. Download them using [this link]()
 
 Example Apps:
 

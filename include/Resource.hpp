@@ -18,7 +18,9 @@ struct Texture {
     enum TextureType {
         DIFFUSE,
         SPECULAR,
-        EMISSION
+        EMISSION,
+        NORMAL,
+        HEIGHT
     };
     std::string type;
     ui32 id;

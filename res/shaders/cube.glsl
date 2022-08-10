@@ -37,6 +37,7 @@ struct Material {
     sampler2D texture_diffuse1;
     sampler2D texture_specular1;
     sampler2D texture_emission1;
+    sampler2D texture_normal1;
     float shininess;
 };
 
@@ -100,9 +101,7 @@ vec3 calculate_point_light(PointLight light, vec3 normal, vec3 fragPos, vec3 vie
 
     vec3 ambient           = amb * light.ambient * texture(material.texture_diffuse1, TexCoords).rgb;// ambiant strength (pixel value) * ambient color * diffuse map
     vec4 diffuse_color_tex = texture(material.texture_diffuse1, TexCoords);                          // diffuse strength (pixel value) * diffuse color * diffuse map
-    if (diffuse_color_tex.a < 0.5) {
-        discard;
-    }
+
     vec3 diffuse  = diff * light.diffuse * diffuse_color_tex.rgb;
     vec3 specular = spec * light.specular * texture(material.texture_specular1, TexCoords).rgb;// specular strength (pixel value) * specular color * specular map
 
@@ -111,8 +110,8 @@ vec3 calculate_point_light(PointLight light, vec3 normal, vec3 fragPos, vec3 vie
 
 void main() {
     vec3 color = vec3(0.0f);
-
-    vec3 norm    = normalize(Normal);
+    vec3 norm = normalize(Normal);
+    
     vec3 viewDir = normalize(cam_pos - FragPos);
 
     color += calculate_directional_light(directional_light, norm, viewDir);

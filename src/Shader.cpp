@@ -15,18 +15,6 @@ void Shader::create() {
 }
 
 void Shader::load_shader(const char *path) {
-    // std::string code_;
-    // std::ifstream file;
-    // file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    // try {
-    //     file.open(path);
-    //     std::stringstream shader_stream;
-    //     shader_stream << file.rdbuf();
-    //     code_ = shader_stream.str();
-    // } catch (std::ifstream::failure &e) {
-    //     std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ: " << e.what() << std::endl;
-    // }
-    // const char *code = code_.c_str();
     std::ifstream file(path);
     std::string line;
     std::stringstream vertex;
