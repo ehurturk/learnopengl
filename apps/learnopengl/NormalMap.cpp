@@ -3,7 +3,7 @@
 #include "glm/ext/matrix_transform.hpp"
 #include "imgui.h"
 
-NormalMap::NormalMap() : Application("NormalMap", 800, 600) {}
+NormalMap::NormalMap() : Application("NormalMap", 2560, 1600) {}
 NormalMap::~NormalMap() { delete box; }
 
 void NormalMap::start() {
@@ -24,14 +24,14 @@ void NormalMap::start() {
     box->load_faces(faces);
     stbi_set_flip_vertically_on_load(true);
 
-    normal_shader.load_shader("../res/shaders/normal_mapping.glsl");
+    normal_shader.load_shader("../res/shaders/ubershader.glsl");
     normal_shader.set_uniform_block_binding("Matrices", 0);
 
     light_source_shader.load_shader("../res/shaders/light.glsl");
     light_source_shader.set_uniform_block_binding("Matrices", 0);
 
     stbi_set_flip_vertically_on_load(false);
-    // car.load_model("../res/models/nanosuit/nanosuit.obj");
+    // car.load_model("../res/models/backpack/backpack.obj");
     car.load_model("../res/models/sponza/sponza.gltf");
     stbi_set_flip_vertically_on_load(true);
 

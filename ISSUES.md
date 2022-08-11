@@ -26,4 +26,23 @@
 
 THIS APP IS FUCKING SLOW WITH --RELEASE BUT OK WITH IMGUI WHY THE FUCK?
 
+ADDED 2 FRAMEBUFFERS AND IT WASNT WORKING AND I DUPED IT AND REMOVED THE ORIGINAL ONE AND IT STARTED WORKING.
+I HATE IMGUI.
+
+NOTEEE:
+FRAMEBUFFER CHANING.
+THERE ARE 3 FRAMEBUFFERS (including the default one):
+1) m_Framebuffer
+2) m_PostProcessBuffer
+3) default
+   
+!!!!
+1) Bind m_Framebuffer
+2) Render the whole scene into m_Framebuffer
+3) Bind m_PostProcessBuffer
+4) Get the texture of m_Framebuffer, draw it into a screen-filled quad in NDC coordinates and apply post processing shader found in res/shaders/post_processing.glsl
+if (IMGUI) then ImGui::Draw(m_PostProcess.texture);
+5) Bind default framebuffer
+if (NOT IMGUI) then get the texture of m_PostProcessBuffer, draw it into a screen-filled quad in NDC coords to the final render.
+
 IDK MAN THIS WHOLE IMGUI THING SEEMS LIKE A TRASH

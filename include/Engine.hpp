@@ -66,6 +66,7 @@ private:
     Application *m_App;
 
     UniformBuffer m_UniformBuffer;
+    Framebuffer m_PostProcessBuffer;
     Framebuffer m_Framebuffer;
 
     float quad_vertices[24] = {
@@ -77,6 +78,7 @@ private:
         1.0f, -1.0f, 1.0f, 0.0f,
         1.0f, 1.0f, 1.0f, 1.0f
     };
-    unsigned int qvbo, qvao;
+    unsigned int vvbo, vvao;
     Shader quad_shader;
+    Shader post_process_shader;
 };

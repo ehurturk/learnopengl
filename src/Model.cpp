@@ -141,7 +141,12 @@ std::vector<Texture> Model::load_material_textures(aiMaterial *mat, aiTextureTyp
             }
         }
         if (!skip) {
-            Texture tex = ResourceManager::load_ogl_texture_from_path(directory + "/" + str.C_Str(), tex_type);
+            bool srgb;
+            if (tex_type == Texture::TextureType::DIFFUSE || tex_type == Texture::TextureType::SPECULAR || tex_type == Texture::TextureType::EMISSION)
+                srgb = true;
+            else
+                srgb = false;
+            Texture tex = ResourceManager::load_ogl_texture_from_path(directory + "/" + str.C_Str(), tex_type, srgb);
             tex.path    = str.C_Str();
             textures.push_back(tex);
             textures_loaded.push_back(tex);

@@ -37,8 +37,10 @@ Engine::~Engine() {
         ImGui::DestroyContext();
     }
 
-    glDeleteVertexArrays(1, &qvao);
-    glDeleteBuffers(1, &qvbo);
+    if (vvao != 0)
+        glDeleteVertexArrays(1, &vvao);
+    if (vvbo != 0)
+        glDeleteBuffers(1, &vvbo);
 }
 
 void Engine::register_app(Application *app) { m_App = app; }
@@ -69,6 +71,18 @@ void Engine::update() {
         float cf = glfwGetTime();
         dt       = cf - lt;
         lt       = cf;
+
+        m_App->update(dt);// render scene
+
+        m_PostProcessBuffer.bind();
+        glDisable(GL_DEPTH_TEST);// disable depth test so screen-space quad isn't discarded due to depth test.
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        post_process_shader.use();
+        // Draw to the post process buffer
+        glBindVertexArray(vvao);
+        glBindTexture(GL_TEXTURE_2D, m_Framebuffer.get_texture());// use the color attachment texture as the texture of the quad plane
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         if (!cfg.raw) {
             static bool opt_fullscreen                = true;
@@ -145,18 +159,21 @@ void Engine::update() {
             static bool viewport_open = true;
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
             ImGui::Begin("Viewport", &viewport_open);
-            {
-                // Get the size of the child (i.e. the whole draw size of the windows).
-                ImVec2 wsize = ImGui::GetContentRegionAvail();
-                if (viewport_x != wsize.x || viewport_y != wsize.y) {
-                    viewport_x = wsize.x;
-                    viewport_y = wsize.y;
-                    // TODO: New framebuffer here
-                    m_Camera->adjust_viewport(viewport_x, viewport_y);
-                    m_Framebuffer.resize(viewport_x, viewport_y);
-                }
-                ImGui::Image((ImTextureID) m_Framebuffer.get_texture(), wsize, ImVec2(0, 1), ImVec2(1, 0));
+
+            // Get the size of the child (i.e. the whole draw size of the windows).
+            ImVec2 wsize = ImGui::GetContentRegionAvail();
+
+
+            if (viewport_x != wsize.x || viewport_y != wsize.y) {
+                viewport_x = wsize.x;
+                viewport_y = wsize.y;
+                // TODO: On window resize
+                m_Camera->adjust_viewport(viewport_x, viewport_y);
+                m_Framebuffer.resize(viewport_x, viewport_y);
+                m_PostProcessBuffer.resize(viewport_x, viewport_y);
             }
+            ImGui::Image((ImTextureID) m_PostProcessBuffer.get_texture(), wsize, ImVec2(0, 1), ImVec2(1, 0));
+
             ImGui::End();
             ImGui::PopStyleVar();
 
@@ -165,22 +182,19 @@ void Engine::update() {
             ImGui::End(); /* end of docking */
             ImGui::Render();
         }
-
-        m_App->update(dt);
-
         // now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
         if (cfg.raw) {
             glDisable(GL_DEPTH_TEST);// disable depth test so screen-space quad isn't discarded due to depth test.
             // clear all relevant buffers
             glClearColor(1.0f, 1.0f, 1.0f, 1.0f);// set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
             glClear(GL_COLOR_BUFFER_BIT);
             quad_shader.use();
-            glBindVertexArray(qvao);
-            glBindTexture(GL_TEXTURE_2D, m_Framebuffer.get_texture());// use the color attachment texture as the texture of the quad plane
+            glBindVertexArray(vvao);
+            glBindTexture(GL_TEXTURE_2D, m_PostProcessBuffer.get_texture());// use the color attachment texture as the texture of the quad plane
             glDrawArrays(GL_TRIANGLES, 0, 6);
         }
-
         m_Window->post_update();
     }
 }
@@ -188,6 +202,7 @@ void Engine::update() {
 void Engine::framebuffer_callback_fn(GLFWwindow *window, int w, int h) {
     m_Camera->adjust_viewport(w, h);
     m_Framebuffer.resize(w, h);
+    m_PostProcessBuffer.resize(w, h);
 }
 
 void Engine::mouse_input_callback_fn(GLFWwindow *window, double xpos, double ypos) {
@@ -235,23 +250,32 @@ void Engine::start() {
     m_Framebuffer.add_spec(Framebuffer::FramebufferSpec::DEPTH24STENCIL8);
     m_Framebuffer.create();
 
-    if (cfg.raw) {
-        glGenVertexArrays(1, &qvao);
-        glGenBuffers(1, &qvbo);
-        glBindVertexArray(qvao);
-        glBindBuffer(GL_ARRAY_BUFFER, qvbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *) 0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *) (2 * sizeof(float)));
-    }
+    m_PostProcessBuffer.init(m_Window->config.width, m_Window->config.height);
+    m_PostProcessBuffer.add_spec(Framebuffer::FramebufferSpec::TEXTURE);
+    // m_PostProcessBuffer.add_spec(Framebuffer::FramebufferSpec::DEPTH24STENCIL8);
+    m_PostProcessBuffer.create();
+
+    glGenVertexArrays(1, &vvao);
+    glGenBuffers(1, &vvbo);
+    glBindVertexArray(vvao);
+    glBindBuffer(GL_ARRAY_BUFFER, vvbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *) 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *) (2 * sizeof(float)));
 
     quad_shader.create();
     quad_shader.load_shader("../res/shaders/framebuffer_quad.glsl");
 
     quad_shader.use();
     quad_shader.setInt("tex", 0);
+
+    post_process_shader.create();
+    post_process_shader.load_shader("../res/shaders/post_process.glsl");
+
+    post_process_shader.use();
+    post_process_shader.setInt("tex", 0);
 
     m_App->start();
 }

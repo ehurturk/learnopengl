@@ -33,10 +33,10 @@ void main() {
     Normal      = model_corrected * aNormal;
     TexCoords   = aTexCoords;
     
-    vec3 T = normalize(vec3(model * vec4(aTangent,   0.0)));
-    vec3 N = normalize(vec3(model * vec4(aNormal,    0.0)));
+    vec3 T = normalize(model_corrected * aTangent);
+    vec3 N = normalize(model_corrected * aNormal);
     T = normalize(T - dot(T, N) * N);
-    vec3 B = cross(N, T);
+    vec3 B = normalize(cross(N, T));
 
     mat3 TBN = transpose(mat3(T, B, N));
     TangentViewPos = TBN * cam_pos;
