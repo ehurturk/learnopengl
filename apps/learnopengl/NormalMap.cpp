@@ -24,16 +24,16 @@ void NormalMap::start() {
     box->load_faces(faces);
     stbi_set_flip_vertically_on_load(true);
 
-    normal_shader.load_shader("../res/shaders/ubershader.glsl");
+    normal_shader.load_shader("../res/shaders/model.glsl");
     normal_shader.set_uniform_block_binding("Matrices", 0);
 
     light_source_shader.load_shader("../res/shaders/light.glsl");
     light_source_shader.set_uniform_block_binding("Matrices", 0);
 
-    stbi_set_flip_vertically_on_load(false);
-    // car.load_model("../res/models/backpack/backpack.obj");
-    car.load_model("../res/models/sponza/sponza.gltf");
-    stbi_set_flip_vertically_on_load(true);
+    // stbi_set_flip_vertically_on_load(false);
+    car.load_model("../res/models/def_cube/scene.gltf");
+    // car.load_model("../res/models/sponza/sponza.gltf");
+    // stbi_set_flip_vertically_on_load(true);
 
     light.load_model("../res/models/globe-sphere/globe-sphere.obj");
 }
@@ -43,10 +43,8 @@ void NormalMap::update(float dt) {
     process_input(dt);
 
     normal_shader.use();
-    // model                     = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
-
     normal_shader.setVec3("cam_pos", Engine::Get().get_subsystem<Camera3D>()->position);
-    normal_shader.setFloat("material.shininess", 32.0f);
+    normal_shader.setFloat("material.shininess", 16.0f);
 
     // Directional light settings
     normal_shader.setVec3("directional_light_dir", -0.2f, -1.0f, -0.3f);// for tangent space calculation
@@ -57,6 +55,7 @@ void NormalMap::update(float dt) {
     // Point light settings
     for (int i = 0; i < ARR_SIZE(light_pos); i++) {
         std::string pos      = "light_pos[" + std::to_string(i) + "]";// for tangent space calculation
+        std::string pos2     = "point_lights[" + std::to_string(i) + "].position";
         std::string am       = "point_lights[" + std::to_string(i) + "].ambient";
         std::string diff     = "point_lights[" + std::to_string(i) + "].diffuse";
         std::string spec     = "point_lights[" + std::to_string(i) + "].specular";
@@ -64,8 +63,9 @@ void NormalMap::update(float dt) {
         std::string linear   = "point_lights[" + std::to_string(i) + "].linear";
         std::string quad     = "point_lights[" + std::to_string(i) + "].quadratic";
 
-        constexpr float AMBIENT_INTENSITY = 0.1f;
+        constexpr float AMBIENT_INTENSITY = 0.01f;
         normal_shader.setVec3(pos.c_str(), light_pos[i]);
+        normal_shader.setVec3(pos2.c_str(), light_pos[i]);
         normal_shader.setVec3(am.c_str(), light_color[i].r * AMBIENT_INTENSITY, light_color[i].g * AMBIENT_INTENSITY, light_color[i].b * AMBIENT_INTENSITY);
         normal_shader.setVec3(diff.c_str(), light_color[i]);
         normal_shader.setVec3(spec.c_str(), light_color[i]);
@@ -75,7 +75,7 @@ void NormalMap::update(float dt) {
     }
 
     glm::mat4 sponza_model = glm::mat4(1.0f);
-    sponza_model           = glm::scale(sponza_model, glm::vec3(0.01f, 0.01f, 0.01f));
+    sponza_model           = glm::scale(sponza_model, glm::vec3(10.0f, 0.01f, 10.f));
     normal_shader.setMat4("model", sponza_model);
     normal_shader.setMat3("model_corrected", glm::mat3(glm::transpose(glm::inverse(sponza_model))));
     normal_shader.setBool("normal_enabled", normal_enabled);

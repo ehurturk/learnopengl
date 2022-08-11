@@ -46,3 +46,11 @@ if (IMGUI) then ImGui::Draw(m_PostProcess.texture);
 if (NOT IMGUI) then get the texture of m_PostProcessBuffer, draw it into a screen-filled quad in NDC coords to the final render.
 
 IDK MAN THIS WHOLE IMGUI THING SEEMS LIKE A TRASH
+
+*****************
+Scene loading.
+Entity (light vs cube?)
+Default objects and add texture? (e.g. instantiate Entity::Cube and later add a simple diffuse texture)
+Set post processing stack.
+Material.
+*****************

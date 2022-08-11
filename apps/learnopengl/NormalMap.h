@@ -37,8 +37,8 @@ private:
 #define COLOR_RED   glm::vec3(1.0f, 0.0f, 0.0f)
 
     glm::vec3 light_pos[2] = {
-        glm::vec3(11.0f, 5.0f, 0.0f),
-        glm::vec3(11.0f, 2.0f, -1.0f),
+        glm::vec3(3.0f, 0.5f, 0.0f),
+        glm::vec3(0.0f, 0.5f, -1.0f),
     };
     glm::vec3 light_color[2] = { COLOR_GREEN, COLOR_BLUE };
 };

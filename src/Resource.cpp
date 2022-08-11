@@ -14,23 +14,26 @@ Image ResourceManager::load_image_from_path(const std::string &path) {
 Texture ResourceManager::load_ogl_texture_from_path(const std::string &path, const Texture::TextureType type, bool srgb) {
     Image res = load_image_from_path(path);
     Texture tex;
-    // tex.type = type;
-    GLenum format;
-    if (res.no_components == 1)
-        format = GL_RED;
-    else if (res.no_components == 3)
-        format = GL_RGB;
-    else if (res.no_components == 4)
-        format = GL_RGBA;
 
-    // if (srgb && res.no_components == 3)
-    //     format = GL_SRGB;
-    // else if (srgb && res.no_components == 4)
-    //     format = GL_SRGB_ALPHA;
+    GLenum format;
+    GLenum format_;
+
+    /* clang-format off */
+    if (res.no_components == 1)      format = GL_RED;
+    else if (res.no_components == 3) format = GL_RGB;
+    else if (res.no_components == 4) format = GL_RGBA;
+    else format = GL_RGB;
+
+    format_ = format;
+
+    if (srgb && res.no_components == 3)      format = GL_SRGB;
+    else if (srgb && res.no_components == 4) format = GL_SRGB_ALPHA;
+    /* clang-format on */
+
 
     glGenTextures(1, &tex.id);
     glBindTexture(GL_TEXTURE_2D, tex.id);
-    glTexImage2D(GL_TEXTURE_2D, 0, format, res.width, res.height, 0, format, GL_UNSIGNED_BYTE, res.data);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, res.width, res.height, 0, format_, GL_UNSIGNED_BYTE, res.data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

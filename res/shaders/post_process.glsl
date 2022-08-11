@@ -22,7 +22,8 @@ in vec2 uv_coord;
 void main() {
     float gamma = 2.2;
     vec4 inter = vec4(texture(tex, uv_coord).rgb, 1.0f);
-    FragCol = vec4(pow(inter.rgb, vec3(1/gamma)), 1.0f);
+    FragCol = pow(inter, vec4(1/gamma));
+    // FragCol = texture(tex, uv_coord);
     // FragCol = vec4(vec3(1-texture(tex, uv_coord)), 1.0f); /* invert colors */
     // FragCol = texture(tex, uv_coord); /* invert colors */
     // FragCol = vec4(uv_coord, 1.0f, 1.0f); /* invert colors */

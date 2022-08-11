@@ -111,7 +111,8 @@ vec3 calculate_directional_light(DirectionalLight light, vec3 normal, vec3 viewD
 
 vec3 calculate_point_light(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 tangent_pos) {
     float distance    = length(tangent_pos - fragPos);
-    float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * pow(distance, 2));
+    // float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * pow(distance, 2));
+    float attenuation = 1.0f /  max((distance*distance), 0.00001);
 
     vec3 lightDir   = normalize(tangent_pos - fragPos);
     vec3 reflectDir = reflect(-lightDir, normal);
