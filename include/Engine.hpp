@@ -51,6 +51,17 @@ public:
     template<>
     inline std::unique_ptr<Window> &get_subsystem<Window>() { return m_Window; }
 
+    inline Framebuffer &get_default_framebuffer() { return m_Framebuffer; }
+
+    std::pair<int, int> get_viewport_size() {
+        if (cfg.raw) {
+            int w, h;
+            glfwGetFramebufferSize(m_Window->get_raw_window(), &w, &h);
+            return std::make_pair(w, h);
+        }
+        return std::make_pair(viewport_w, viewport_h);
+    }
+
 private:
     static std::unique_ptr<Engine> instance;
     Engine();
@@ -80,6 +91,8 @@ private:
     };
 
     unsigned int vvbo, vvao;
+
+    unsigned viewport_w, viewport_h;
 
     Shader quad_shader;
     Shader post_process_shader;

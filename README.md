@@ -13,12 +13,15 @@ Normal Map Disabled             |  Normal Map Enabled
 :-------------------------:|:-------------------------:
 ![grind](gallery/no_normal_map.jpeg)  |  ![](gallery/yes_normal_map.jpeg)
 
+Soft PCF Shadow Mapping + Depth Buffer Visualized
+![zigmus](gallery/shadows.jpeg)
+
 Project Roadmap (in order)
 * Batch Rendering
 * Instancing
 * PBR implementation
 * Organizing code (very important since the code is shit)
-* Shadows
+* Shadows (~~directional light~~)
 * ~~Normal Mapping~~
 * Parallax Mapping
 * Support for Geometry Shaders

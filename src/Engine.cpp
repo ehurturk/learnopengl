@@ -162,15 +162,14 @@ void Engine::update() {
 
             // Get the size of the child (i.e. the whole draw size of the windows).
             ImVec2 wsize = ImGui::GetContentRegionAvail();
-
+            viewport_w   = wsize.x;
+            viewport_h   = wsize.y;
 
             if (viewport_x != wsize.x || viewport_y != wsize.y) {
                 viewport_x = wsize.x;
                 viewport_y = wsize.y;
                 // TODO: On window resize
-                m_Camera->adjust_viewport(viewport_x, viewport_y);
-                m_Framebuffer.resize(viewport_x, viewport_y);
-                m_PostProcessBuffer.resize(viewport_x, viewport_y);
+                framebuffer_callback_fn(m_Window->get_raw_window(), viewport_x, viewport_h);
             }
             ImGui::Image((ImTextureID) m_PostProcessBuffer.get_texture(), wsize, ImVec2(0, 1), ImVec2(1, 0));
 
@@ -182,6 +181,7 @@ void Engine::update() {
             ImGui::End(); /* end of docking */
             ImGui::Render();
         }
+
         // now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -200,7 +200,7 @@ void Engine::update() {
 }
 
 void Engine::framebuffer_callback_fn(GLFWwindow *window, int w, int h) {
-    m_Camera->adjust_viewport(w, h);
+    m_Camera->adjust_viewport(w, h);// proj matrix correction + glViewport
     m_Framebuffer.resize(w, h);
     m_PostProcessBuffer.resize(w, h);
 }
@@ -246,12 +246,12 @@ void Engine::start() {
     /* binding specific region of data is especially useful when an UBO is being used as a buffer of all uniforms, and one can easily select a specific part of the buffer to load in the uniforms.*/
 
     m_Framebuffer.init(m_Window->config.width, m_Window->config.height);
-    m_Framebuffer.add_spec(Framebuffer::FramebufferSpec::TEXTURE);
+    m_Framebuffer.add_spec(Framebuffer::FramebufferSpec::COLOR);
     m_Framebuffer.add_spec(Framebuffer::FramebufferSpec::DEPTH24STENCIL8);
     m_Framebuffer.create();
 
     m_PostProcessBuffer.init(m_Window->config.width, m_Window->config.height);
-    m_PostProcessBuffer.add_spec(Framebuffer::FramebufferSpec::TEXTURE);
+    m_PostProcessBuffer.add_spec(Framebuffer::FramebufferSpec::COLOR);
     // m_PostProcessBuffer.add_spec(Framebuffer::FramebufferSpec::DEPTH24STENCIL8);
     m_PostProcessBuffer.create();
 

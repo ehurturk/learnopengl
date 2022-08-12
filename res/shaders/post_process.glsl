@@ -21,8 +21,12 @@ in vec2 uv_coord;
 
 void main() {
     float gamma = 2.2;
-    vec4 inter = vec4(texture(tex, uv_coord).rgb, 1.0f);
-    FragCol = pow(inter, vec4(1/gamma));
+    vec3 color = texture(tex, uv_coord).rgb;
+
+    // reinhard tone mapping
+    vec3 mapped = color / (color + vec3(1.0f));
+    mapped = pow(mapped, vec3(1/gamma));
+    FragCol = vec4(mapped, 1.0);
     // FragCol = texture(tex, uv_coord);
     // FragCol = vec4(vec3(1-texture(tex, uv_coord)), 1.0f); /* invert colors */
     // FragCol = texture(tex, uv_coord); /* invert colors */

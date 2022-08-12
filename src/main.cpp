@@ -1,8 +1,11 @@
 #include "Engine.hpp"
 #include "../apps/SponzaApp.hpp"
 #include "../apps/learnopengl/NormalMap.h"
+#include "../apps/learnopengl/ShadowMap.h"
 #include <cstdlib>
 #include <memory>
+
+#include "yaml-cpp/yaml.h"
 
 /* usage: ./LearnOpenGL --raw (for displaying only the game)*/
 /*    or: ./LearnOpenGL (for displaying the editor)*/
@@ -17,7 +20,7 @@ int main(int argc, char **argv) {
 
     Engine &engine = Engine::Get();
 
-    auto app      = std::make_shared<NormalMap>();
+    auto app      = std::make_shared<ShadowMap>();
     AppConfig cfg = app->get_config();
     if (argc == 2 && (strcmp(argv[1], "--release") == 0 || strcmp(argv[1], "-r") == 0)) {
         cfg.raw = true;
@@ -28,6 +31,7 @@ int main(int argc, char **argv) {
 
     Engine::Get().start();
     Engine::Get().update();
+
 
     return EXIT_SUCCESS;
 }

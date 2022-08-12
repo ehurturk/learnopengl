@@ -64,7 +64,7 @@ struct PointLight {
 uniform Material material;
 uniform DirectionalLight directional_light;
 
-#define NR_POINT_LIGHTS 2
+#define NR_POINT_LIGHTS 4
 uniform PointLight point_lights[NR_POINT_LIGHTS];
 
 uniform vec3 cam_pos;
@@ -77,9 +77,9 @@ vec3 calculate_directional_light(DirectionalLight light, vec3 normal, vec3 viewD
 
     float diff = max(dot(normal, lightDir), 0.0);
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
-    float amb  = 1.0f;
 
-    vec3 ambient  = amb * light.ambient * pow(vec4(1.0f), vec4(2.2)).rgb;
+    float am = 0.5f;
+    vec3 ambient  = am * light.ambient * pow(vec4(1.0f), vec4(2.2)).rgb;
     vec3 diffuse  = diff * light.diffuse * pow(vec4(1.0f), vec4(2.2)).rgb;
     vec3 specular = spec * light.specular * pow(vec4(1.0f), vec4(2.2)).rgb;
 
@@ -88,7 +88,7 @@ vec3 calculate_directional_light(DirectionalLight light, vec3 normal, vec3 viewD
 
 vec3 calculate_point_light(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     float distance    = length(light.position - fragPos);
-    float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * pow(distance, 2));
+    float attenuation = 1.0f / max((distance*distance), 0.00001);
 
     vec3 lightDir   = normalize(light.position - fragPos);
     vec3 reflectDir = reflect(-lightDir, normal);
@@ -99,7 +99,7 @@ vec3 calculate_point_light(PointLight light, vec3 normal, vec3 fragPos, vec3 vie
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
     float amb  = 1.0;
 
-    vec3 ambient           = amb * light.ambient * pow(vec4(1.0f), vec4(2.2)).rgb;// ambiant strength (pixel value) * ambient color * diffuse map
+    vec3 ambient           = amb * light.ambient * pow(vec4(1.0f), vec4(2.2)).rgb;// ambient strength (pixel value) * ambient color * diffuse map
     vec4 diffuse_color_tex = pow(vec4(1.0f), vec4(2.2));                          // diffuse strength (pixel value) * diffuse color * diffuse map
 
     vec3 diffuse  = diff * light.diffuse * diffuse_color_tex.rgb;

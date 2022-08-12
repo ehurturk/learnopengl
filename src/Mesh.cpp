@@ -53,15 +53,17 @@ void Mesh::draw(const Shader &shader) const {
         base_name = textures[i].type;
         if (std::strcmp(base_name.c_str(), "texture_diffuse") == 0)
             n = std::to_string(no_diffuse++);
-        else if (std::strcmp(base_name.c_str(), "texture_specular") == 0)
+        else if (std::strcmp(base_name.c_str(), "material.texture_specular") == 0)
             n = std::to_string(no_specular++);// transfer unsigned int to string
-        else if (std::strcmp(base_name.c_str(), "texture_emission") == 0)
+        else if (std::strcmp(base_name.c_str(), "material.texture_emission") == 0)
             n = std::to_string(no_emission++);// transfer unsigned int to string
-        else if (std::strcmp(base_name.c_str(), "texture_normal") == 0)
+        else if (std::strcmp(base_name.c_str(), "material.texture_normal") == 0)
             n = std::to_string(no_normal++);// transfer unsigned int to string
-        else if (std::strcmp(base_name.c_str(), "texture_height") == 0)
+        else if (std::strcmp(base_name.c_str(), "material.texture_height") == 0)
             n = std::to_string(no_height++);// transfer unsigned int to string
-        shader.setInt("material." + base_name + n, i);
+        else
+            n = "";// whatever the basename is
+        shader.setInt(base_name + n, i);
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
 

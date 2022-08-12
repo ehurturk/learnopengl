@@ -20,7 +20,7 @@ struct Texture {
         SPECULAR,
         EMISSION,
         NORMAL,
-        HEIGHT
+        HEIGHT,
     };
     std::string type;
     ui32 id;

@@ -21,4 +21,6 @@ in vec2 uv_coord;
 
 void main() {
     FragCol = vec4(texture(tex, uv_coord).rgb, 1.0f);
+    // float depthValue = texture(tex, uv_coord).r;
+    // FragCol = vec4(vec3(depthValue), 1.0);
 }

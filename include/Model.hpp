@@ -8,6 +8,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <string>
 
 
 class Model {
@@ -16,6 +17,10 @@ public:
     ~Model();
     void draw(const Shader &shader);
     void load_model(const std::string &path);
+
+    void add_texture(const std::string &path);
+    void add_texture(const Texture &tex);
+    void add_texture(unsigned int tex, const std::string &base_name);
 
 private:
     enum class ModelType {

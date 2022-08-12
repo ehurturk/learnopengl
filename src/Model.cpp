@@ -35,6 +35,24 @@ void Model::load_model(const std::string &path) {
     }
 }
 
+// TODO Complete these!
+void Model::add_texture(const std::string &path) {
+    Texture tex = ResourceManager::load_ogl_texture_from_path(path);
+    add_texture(tex);
+}
+
+void Model::add_texture(const Texture &tex) {
+    for (int i = 0; i < meshes.size(); i++) {
+        meshes[i].textures.push_back(tex);
+    }
+}
+
+void Model::add_texture(unsigned int tex, const std::string &base_name) {
+    for (int i = 0; i < meshes.size(); i++) {
+        meshes[i].textures.push_back({ .type = base_name, .id = tex });
+    }
+}
+
 void Model::process_node(aiNode *node, const aiScene *scene, ModelType type) {
     // process each mesh located at the current node
     for (unsigned int i = 0; i < node->mNumMeshes; i++) {
@@ -127,7 +145,6 @@ Mesh Model::process_mesh(aiMesh *mesh, const aiScene *scene, ModelType type) {
 }
 
 std::vector<Texture> Model::load_material_textures(aiMaterial *mat, aiTextureType type, Texture::TextureType tex_type) {
-
     std::vector<Texture> textures;
     for (int i = 0; i < mat->GetTextureCount(type); i++) {
         aiString str;
@@ -146,6 +163,7 @@ std::vector<Texture> Model::load_material_textures(aiMaterial *mat, aiTextureTyp
                 srgb = true;
             else
                 srgb = false;
+
             Texture tex = ResourceManager::load_ogl_texture_from_path(directory + "/" + str.C_Str(), tex_type, srgb);
             tex.path    = str.C_Str();
             textures.push_back(tex);

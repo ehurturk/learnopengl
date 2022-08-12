@@ -16,7 +16,8 @@
 class Framebuffer {
 public:
     enum class FramebufferSpec {
-        TEXTURE,
+        COLOR,
+        DEPTH_MAP,
         DEPTH24STENCIL8,
     };
 
