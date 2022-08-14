@@ -4,12 +4,16 @@
 #include <string>
 
 #include "GLFW/glfw3.h"
+#include "ImGuizmo.h"
 #include "glm/ext/matrix_transform.hpp"
+#include "glm/fwd.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include "ImGuizmo.h"
+
 
 #include "Model.hpp"
 
@@ -67,6 +71,7 @@ void Engine::update() {
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
+            ImGuizmo::BeginFrame();
         }
         float cf = glfwGetTime();
         dt       = cf - lt;
@@ -112,11 +117,6 @@ void Engine::update() {
             if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
                 window_flags_docking |= ImGuiWindowFlags_NoBackground;
 
-            // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-            // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-            // all active windows docked into it will lose their parent and become undocked.
-            // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-            // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
             if (!opt_padding)
                 ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
             ImGui::Begin("DockSpace Demo", &docking_enabled, window_flags_docking);
@@ -161,6 +161,8 @@ void Engine::update() {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
             ImGui::Begin("Viewport", &viewport_open);
 
+            block_input = !ImGui::IsWindowFocused();
+
             // Get the size of the child (i.e. the whole draw size of the windows).
             ImVec2 wsize = ImGui::GetContentRegionAvail();
             viewport_w   = wsize.x;
@@ -173,6 +175,16 @@ void Engine::update() {
                 framebuffer_callback_fn(m_Window->get_raw_window(), viewport_x, viewport_h);
             }
             ImGui::Image((ImTextureID) m_PostProcessBuffer.get_texture(), wsize, ImVec2(0, 1), ImVec2(1, 0));
+
+            // Gizmos
+            ImGuizmo::SetOrthographic(false);
+            ImGuizmo::SetDrawlist();
+            float windowWidth  = (float) ImGui::GetWindowWidth();
+            float windowHeight = (float) ImGui::GetWindowHeight();
+            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+            glm::mat4 &proj = m_Camera->get_projection_matrix();
+            glm::mat4 &view = m_Camera->get_view_matrix();
 
             ImGui::End();
             ImGui::PopStyleVar();
@@ -237,11 +249,13 @@ void Engine::framebuffer_callback_fn(GLFWwindow *window, int w, int h) {
 }
 
 void Engine::mouse_input_callback_fn(GLFWwindow *window, double xpos, double ypos) {
-    m_Camera->mouse_callback_fn(xpos, ypos);
+    if (!block_input)
+        m_Camera->mouse_callback_fn(xpos, ypos);
 }
 
 void Engine::key_input_callback_fn(GLFWwindow *window, int key, int scan, int action, int mods) {
-    m_Camera->key_callback_fn(key, scan, action, mods);
+    if (!block_input)
+        m_Camera->key_callback_fn(key, scan, action, mods);
 }
 
 void Engine::start() {

@@ -50,7 +50,7 @@ private:
     };
 
     int tone_maps[3];
-    int tone_map_type = 1.0f;
+    int tone_map_type = 3;
     HdrToneMappingSettings tone_mapping_settings;
     GammaCorrectionSettings gamma_settings;
 
@@ -60,10 +60,10 @@ private:
 #define COLOR_RED   glm::vec3(1.0f, 0.0f, 0.0f)
 
     glm::vec3 light_pos[4] = {
-        glm::vec3(-3.0f, 11.f, 0.0f),
-        glm::vec3(-1.0f, 11.f, 0.0f),
-        glm::vec3(1.0f, 11.f, 0.0f),
-        glm::vec3(3.0f, 11.f, 0.0f)
+        glm::vec3(-3.0f, -3.f, 0.0f),
+        glm::vec3(-1.0f, -3.f, 0.0f),
+        glm::vec3(1.0f, -3.f, 0.0f),
+        glm::vec3(3.0f, -3.f, 0.0f)
     };
     glm::vec3 light_color[4] = { glm::vec3(0.25),
                                  glm::vec3(0.50),

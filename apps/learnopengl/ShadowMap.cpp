@@ -7,7 +7,7 @@
 ShadowMap::ShadowMap() : Application("Shadow Mapping", 2560, 1600) {}
 ShadowMap::~ShadowMap() { delete box; }
 
-static constexpr int SHADOW_MAP_RESOLUTION = 1024;
+static constexpr int SHADOW_MAP_RESOLUTION = 2048;
 
 void ShadowMap::start() {
     // Executed on initialization
@@ -53,9 +53,11 @@ void ShadowMap::start() {
     depth_map_shader.create();
     depth_map_shader.load_shader("../res/shaders/depth_map.glsl");
 
-    Texture wood   = ResourceManager::load_ogl_texture_from_path("../res/textures/wood.png", Texture::TextureType::DIFFUSE, true);
-    Texture normal = ResourceManager::load_ogl_texture_from_path("../res/models/manhole/textures/Scene_-_Root_normal.png", Texture::TextureType::NORMAL, false);
-    floor.add_texture(wood);  // diffuse
+    Texture diffuse = ResourceManager::load_ogl_texture_from_path("../res/textures/hardwood.jpg", Texture::TextureType::DIFFUSE, true);
+    // Texture specular = ResourceManager::load_ogl_texture_from_path("../res/textures/hardwood_specular.jpg", Texture::TextureType::SPECULAR, true);
+    Texture normal = ResourceManager::load_ogl_texture_from_path("../res/textures/hardwood_normal.jpg", Texture::TextureType::NORMAL, false);
+    floor.add_texture(diffuse);// diffuse
+    // floor.add_texture(specular);// diffuse
     floor.add_texture(normal);// diffuse
 
     car.add_texture(depth_map.get_texture(), "shadow_map");
@@ -82,8 +84,8 @@ void ShadowMap::update(float dt) {
     depth_map.bind();
     glClear(GL_DEPTH_BUFFER_BIT);
     /* light projection matrix */
-    float near_plane = 1.0f, far_plane = 15.0f;
-    glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+    float near_plane = 0.1f, far_plane = 75.0f;
+    glm::mat4 lightProjection = glm::ortho(-35.0f, 35.0f, -35.0f, 35.0f, near_plane, far_plane);
 
     /* light view matrix */
     glm::mat4 lightView = glm::lookAt(dir_light_dir,               // position
@@ -271,11 +273,11 @@ void ShadowMap::imgui_update() {
     tone_mapping_settings.type = static_cast<HdrToneMappingSettings::HdrToneMapType>(tone_map_type);
     if (tone_map_type == 3) {
         static float exposure = 0.1f;
-        ImGui::DragFloat("Exposure", &exposure);
+        ImGui::SliderFloat("Exposure", &exposure, 0.0f, 5.0f);
         tone_mapping_settings.info.exposure = exposure;
     }
 
-    ImGui::DragFloat("Gamma", &gamma_settings.gamma);
+    ImGui::SliderFloat("Gamma", &gamma_settings.gamma, 0.0f, 2.2f);
 
     static bool visualize_depth = false;
     ImGui::Checkbox("Visualize Shadow Depth Map", &visualize_depth);

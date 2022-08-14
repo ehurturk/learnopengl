@@ -71,7 +71,7 @@ public:
     void update();
 
     template<typename T>
-    inline std::unique_ptr<T> &get_subsystem();
+    inline std::unique_ptr<T> &get_subsystem() {}
 
     template<>
     inline std::unique_ptr<Camera3D> &get_subsystem<Camera3D>() { return m_Camera; }
@@ -123,6 +123,8 @@ private:
     unsigned int vvbo, vvao;
 
     unsigned viewport_w, viewport_h;
+
+    bool block_input = false;
 
     Shader quad_shader;
     Shader post_process_shader;

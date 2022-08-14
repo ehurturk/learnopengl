@@ -13,8 +13,8 @@ Normal Map Disabled             |  Normal Map Enabled
 :-------------------------:|:-------------------------:
 ![grind](gallery/no_normal_map.jpeg)  |  ![](gallery/yes_normal_map.jpeg)
 
-Soft PCF Shadow Mapping + Depth Buffer Visualized
-![zigmus](gallery/shadows.jpeg)
+Soft PCF Shadow Mapping + HDR Tonemapping Algorithms (ACES Filmic, Exposure, Reinhard, Uncharted 2)
+![zigmus](gallery/shadow_mapping.jpeg)
 
 Project Roadmap (in order)
 * ~~HDR~~/Bloom
