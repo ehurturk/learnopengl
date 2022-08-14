@@ -47,14 +47,14 @@ void NormalMap::update(float dt) {
     normal_shader.setFloat("material.shininess", 64.0f);
 
     // Directional light settings
-    normal_shader.setVec3("directional_light_dir", -0.2f, -1.0f, -0.3f);// for tangent space calculation
+    normal_shader.setVec3("directional_light.direction", -0.2f, -1.0f, -0.3f);// for tangent space calculation
     normal_shader.setVec3("directional_light.ambient", 0.05f, 0.05f, 0.05f);
     normal_shader.setVec3("directional_light.diffuse", 0.4f, 0.4f, 0.4f);
     normal_shader.setVec3("directional_light.specular", 0.5f, 0.5f, 0.5f);
 
     // Point light settings
     for (int i = 0; i < ARR_SIZE(light_pos); i++) {
-        std::string pos      = "light_pos[" + std::to_string(i) + "]";// for tangent space calculation
+        std::string pos      = "point_lights[" + std::to_string(i) + "].position";// for tangent space calculation
         std::string am       = "point_lights[" + std::to_string(i) + "].ambient";
         std::string diff     = "point_lights[" + std::to_string(i) + "].diffuse";
         std::string spec     = "point_lights[" + std::to_string(i) + "].specular";

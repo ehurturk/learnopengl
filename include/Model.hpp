@@ -28,6 +28,7 @@ private:
         OBJ,
         GLTF,
     };
+
     void process_node(aiNode *node, const aiScene *scene, ModelType type);
     Mesh process_mesh(aiMesh *mesh, const aiScene *scene, ModelType type);
     std::vector<Texture> load_material_textures(aiMaterial *mat, aiTextureType type,

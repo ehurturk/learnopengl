@@ -41,19 +41,19 @@ Texture ResourceManager::load_ogl_texture_from_path(const std::string &path, con
 
     switch (type) {
         case Texture::TextureType::DIFFUSE:
-            tex.type = "texture_diffuse";
+            tex.type = "material.texture_diffuse";
             break;
         case Texture::TextureType::SPECULAR:
-            tex.type = "texture_specular";
+            tex.type = "material.texture_specular";
             break;
         case Texture::TextureType::EMISSION:
-            tex.type = "texture_emission";
+            tex.type = "material.texture_emission";
             break;
         case Texture::TextureType::NORMAL:
-            tex.type = "texture_normal";
+            tex.type = "material.texture_normal";
             break;
         case Texture::TextureType::HEIGHT:
-            tex.type = "texture_height";
+            tex.type = "material.texture_height";
             break;
     }
 

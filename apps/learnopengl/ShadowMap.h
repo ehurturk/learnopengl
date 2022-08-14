@@ -49,10 +49,10 @@ private:
 #define COLOR_RED   glm::vec3(1.0f, 0.0f, 0.0f)
 
     glm::vec3 light_pos[4] = {
-        glm::vec3(-3.0f, 0.5f, 0.0f),
-        glm::vec3(-1.0f, 0.5f, 0.0f),
-        glm::vec3(1.0f, 0.5f, 0.0f),
-        glm::vec3(3.0f, 0.5f, 0.0f)
+        glm::vec3(-3.0f, -2.f, 0.0f),
+        glm::vec3(-1.0f, -2.f, 0.0f),
+        glm::vec3(1.0f, -2.f, 0.0f),
+        glm::vec3(3.0f, -2.f, 0.0f)
     };
     glm::vec3 light_color[4] = { glm::vec3(0.25),
                                  glm::vec3(0.50),
@@ -60,16 +60,17 @@ private:
                                  glm::vec3(1.00) };
 
     glm::vec3 entity_pos[2] = {
-        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(0.0f, 2.0f, 0.0f),
         glm::vec3(0.0f, -4.0f, 0.0f),
     };
     glm::vec3 entity_scale[2] = {
         glm::vec3(1.0f, 1.0f, 1.0f),
-        glm::vec3(20.0f, 0.01f, 20.0f),
+        // glm::vec3(0.01f, 0.01f, 0.01f),
+        glm::vec3(20.f, 0.01f, 20.f),
     };
     glm::vec3 entity_rot[2] = {
         glm::vec3(0.0f, -90.0f, 0.0f),
-        glm::vec3(0.0f, 0.0f, 0.0f)
+        glm::vec3(-90.0f, 0.0f, 90.0f)
     };
 
     glm::mat4 lightSpaceMatrix;

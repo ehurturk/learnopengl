@@ -27,12 +27,13 @@ void ShadowMap::start() {
     stbi_set_flip_vertically_on_load(true);
 
     normal_shader.load_shader("../res/shaders/ubershader.glsl");
+    // normal_shader.load_shader("../res/shaders/shadow.glsl");
     normal_shader.set_uniform_block_binding("Matrices", 0);
 
     light_source_shader.load_shader("../res/shaders/light.glsl");
     light_source_shader.set_uniform_block_binding("Matrices", 0);
 
-    floor_shadow_shader.load_shader("../res/shaders/shadow.glsl");
+    floor_shadow_shader.load_shader("../res/shaders/ubershader.glsl");
     floor_shadow_shader.set_uniform_block_binding("Matrices", 0);
 
     // stbi_set_flip_vertically_on_load(false);
@@ -51,9 +52,12 @@ void ShadowMap::start() {
     depth_map_shader.create();
     depth_map_shader.load_shader("../res/shaders/depth_map.glsl");
 
+    Texture wood   = ResourceManager::load_ogl_texture_from_path("../res/textures/wood.png", Texture::TextureType::DIFFUSE, true);
+    Texture normal = ResourceManager::load_ogl_texture_from_path("../res/models/manhole/textures/Scene_-_Root_normal.png", Texture::TextureType::NORMAL, false);
+    floor.add_texture(wood);  // diffuse
+    floor.add_texture(normal);// diffuse
+
     car.add_texture(depth_map.get_texture(), "shadow_map");
-    Texture wood = ResourceManager::load_ogl_texture_from_path("../res/textures/wood.png");
-    floor.add_texture(wood);
     floor.add_texture(depth_map.get_texture(), "shadow_map");
 }
 
@@ -94,14 +98,14 @@ void ShadowMap::geometry_pass() {
     normal_shader.setFloat("material.shininess", 64.0f);
 
     // Directional light settings
-    normal_shader.setVec3("directional_light_dir", -0.2f, -1.0f, -0.3f);// for tangent space calculation
+    normal_shader.setVec3("directional_light.direction", -0.2f, -1.0f, -0.3f);// for tangent space calculation
     normal_shader.setVec3("directional_light.ambient", 0.05f, 0.05f, 0.05f);
     normal_shader.setVec3("directional_light.diffuse", 0.4f, 0.4f, 0.4f);
     normal_shader.setVec3("directional_light.specular", 0.5f, 0.5f, 0.5f);
 
     // Point light settings
     for (int i = 0; i < ARR_SIZE(light_pos); i++) {
-        std::string pos      = "light_pos[" + std::to_string(i) + "]";// for tangent space calculation
+        std::string pos      = "point_lights[" + std::to_string(i) + "].position";// for tangent space calculation
         std::string am       = "point_lights[" + std::to_string(i) + "].ambient";
         std::string diff     = "point_lights[" + std::to_string(i) + "].diffuse";
         std::string spec     = "point_lights[" + std::to_string(i) + "].specular";
@@ -119,6 +123,9 @@ void ShadowMap::geometry_pass() {
         normal_shader.setFloat(quad.c_str(), 0.032f);
     }
 
+    normal_shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+    normal_shader.setBool("soft_shadows", soft_shadows);
+    normal_shader.setBool("normal_enabled", normal_enabled);
     {
         glm::mat4 model = glm::mat4(1.0f);
         model           = glm::translate(model, entity_pos[0]);
@@ -130,7 +137,39 @@ void ShadowMap::geometry_pass() {
         normal_shader.setMat3("model_corrected", glm::mat3(glm::transpose(glm::inverse(model))));
         car.draw(normal_shader);
     }
+    floor_shadow_shader.use();
+    floor_shadow_shader.setVec3("cam_pos", Engine::Get().get_subsystem<Camera3D>()->position);
+    floor_shadow_shader.setFloat("material.shininess", 64.0f);
 
+    // Directional light settings
+    floor_shadow_shader.setVec3("directional_light.direction", -0.2f, -1.0f, -0.3f);// for tangent space calculation
+    floor_shadow_shader.setVec3("directional_light.ambient", 0.05f, 0.05f, 0.05f);
+    floor_shadow_shader.setVec3("directional_light.diffuse", 0.4f, 0.4f, 0.4f);
+    floor_shadow_shader.setVec3("directional_light.specular", 0.5f, 0.5f, 0.5f);
+
+    // Point light settings
+    for (int i = 0; i < ARR_SIZE(light_pos); i++) {
+        std::string pos      = "point_lights[" + std::to_string(i) + "].position";// for tangent space calculation
+        std::string am       = "point_lights[" + std::to_string(i) + "].ambient";
+        std::string diff     = "point_lights[" + std::to_string(i) + "].diffuse";
+        std::string spec     = "point_lights[" + std::to_string(i) + "].specular";
+        std::string constant = "point_lights[" + std::to_string(i) + "].constant";
+        std::string linear   = "point_lights[" + std::to_string(i) + "].linear";
+        std::string quad     = "point_lights[" + std::to_string(i) + "].quadratic";
+
+        constexpr float AMBIENT_INTENSITY = 0.1f;
+        floor_shadow_shader.setVec3(pos.c_str(), light_pos[i]);
+        floor_shadow_shader.setVec3(am.c_str(), light_color[i].r * AMBIENT_INTENSITY, light_color[i].g * AMBIENT_INTENSITY, light_color[i].b * AMBIENT_INTENSITY);
+        floor_shadow_shader.setVec3(diff.c_str(), light_color[i]);
+        floor_shadow_shader.setVec3(spec.c_str(), light_color[i]);
+        floor_shadow_shader.setFloat(constant.c_str(), 1.0f);
+        floor_shadow_shader.setFloat(linear.c_str(), 0.09f);
+        floor_shadow_shader.setFloat(quad.c_str(), 0.032f);
+    }
+
+    floor_shadow_shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+    floor_shadow_shader.setBool("soft_shadows", soft_shadows);
+    floor_shadow_shader.setBool("normal_enabled", normal_enabled);
     {
         glm::mat4 model = glm::mat4(1.0f);
         model           = glm::translate(model, entity_pos[1]);
@@ -138,10 +177,8 @@ void ShadowMap::geometry_pass() {
         model           = glm::rotate(model, glm::radians(entity_rot[1].x), glm::vec3(1.0f, 0.0f, 0.0f));
         model           = glm::rotate(model, glm::radians(entity_rot[1].y), glm::vec3(0.0f, 1.0f, 0.0f));
         model           = glm::rotate(model, glm::radians(entity_rot[1].z), glm::vec3(0.0f, 0.0f, 1.0f));
-        floor_shadow_shader.use();
         floor_shadow_shader.setMat4("model", model);
-        floor_shadow_shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-        floor_shadow_shader.setBool("soft_shadows", soft_shadows);
+        floor_shadow_shader.setMat3("model_corrected", glm::mat3(glm::transpose(glm::inverse(model))));
         floor.draw(floor_shadow_shader);
     }
 
