@@ -148,6 +148,8 @@ void Window::initialize() {
         return;
     }
 
+    // glfwSwapInterval(0);
+
     glfwGetFramebufferSize(window, (int *) &config.width, (int *) &config.height);
     glViewport(0, 0, config.width, config.height);
 

@@ -25,6 +25,34 @@
 #include "graphics/Framebuffer.h"
 
 // forward declerations
+enum class PostProcessElements {
+    GAMMA_CORRECTION,
+    HDR_TONEMAPPING,
+};
+
+
+struct HdrToneMappingSettings {
+    HdrToneMappingSettings() {}
+    enum class HdrToneMapType {
+        NONE = 0,
+        ACES_FILMIC,
+        REINHARD,
+        EXPOSURE,
+        UNCHARTED2
+    };
+    union HdrToneMapInfo {
+        HdrToneMapInfo() {}
+        struct {
+            float exposure = 0.1f;
+        };
+    };
+    HdrToneMapType type;
+    HdrToneMapInfo info;
+};
+
+struct GammaCorrectionSettings {
+    float gamma = 2.2f;
+};
 
 class Engine {
 public:
@@ -62,6 +90,8 @@ public:
         return std::make_pair(viewport_w, viewport_h);
     }
 
+    void add_post_process_effect(PostProcessElements element, void *settings);
+
 private:
     static std::unique_ptr<Engine> instance;
     Engine();
@@ -96,4 +126,6 @@ private:
 
     Shader quad_shader;
     Shader post_process_shader;
+
+    std::unordered_map<PostProcessElements, void *> post_process_stack;
 };

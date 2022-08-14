@@ -78,6 +78,7 @@ void Engine::update() {
         glDisable(GL_DEPTH_TEST);// disable depth test so screen-space quad isn't discarded due to depth test.
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
         post_process_shader.use();
         // Draw to the post process buffer
         glBindVertexArray(vvao);
@@ -185,6 +186,32 @@ void Engine::update() {
         // now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+        for (const auto &element : post_process_stack) {
+            switch (element.first) {
+                case PostProcessElements::GAMMA_CORRECTION:
+                    post_process_shader.setInt("gamma_correction", 1);
+                    post_process_shader.setFloat("gamma", ((GammaCorrectionSettings *) element.second)->gamma);
+                    break;
+                case PostProcessElements::HDR_TONEMAPPING:
+                    HdrToneMappingSettings *settings = (HdrToneMappingSettings *) element.second;
+                    post_process_shader.setInt("tone_mapping", static_cast<int>(settings->type));// 0 for none, 1 for aces filmic, 2 for reinhard, 3 for exposure
+                    switch (settings->type) {
+                        case HdrToneMappingSettings::HdrToneMapType::ACES_FILMIC:
+                            break;
+                        case HdrToneMappingSettings::HdrToneMapType::EXPOSURE:
+                            post_process_shader.setFloat("exposure", settings->info.exposure);// 0 for none, 1 for aces filmic, 2 for reinhard, 3 for exposure
+                            break;
+                        case HdrToneMappingSettings::HdrToneMapType::REINHARD:
+                            break;
+                        case HdrToneMappingSettings::HdrToneMapType::UNCHARTED2:
+                            break;
+                        case HdrToneMappingSettings::HdrToneMapType::NONE:
+                            break;
+                    }
+                    break;
+            }
+        }
+
         if (cfg.raw) {
             glDisable(GL_DEPTH_TEST);// disable depth test so screen-space quad isn't discarded due to depth test.
             // clear all relevant buffers
@@ -197,6 +224,10 @@ void Engine::update() {
         }
         m_Window->post_update();
     }
+}
+
+void Engine::add_post_process_effect(PostProcessElements element, void *settings) {
+    post_process_stack[element] = settings;
 }
 
 void Engine::framebuffer_callback_fn(GLFWwindow *window, int w, int h) {

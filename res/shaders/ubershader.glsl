@@ -136,7 +136,7 @@ vec3 calculate_point_light(PointLight light, vec3 normal, vec3 fragPos, vec3 vie
 
     float diff = max(dot(normal, lightDir), 0.0);
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
-    float amb  = 1.0;
+    float amb  = 0.1;
 
     vec3 ambient           = amb * light.ambient * texture(material.texture_diffuse1, fs_in.TexCoords).rgb;// ambiant strength (pixel value) * ambient color * diffuse map
     vec4 diffuse_color_tex = texture(material.texture_diffuse1, fs_in.TexCoords);                          // diffuse strength (pixel value) * diffuse color * diffuse map

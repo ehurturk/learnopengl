@@ -7,6 +7,8 @@
 ShadowMap::ShadowMap() : Application("Shadow Mapping", 2560, 1600) {}
 ShadowMap::~ShadowMap() { delete box; }
 
+static constexpr int SHADOW_MAP_RESOLUTION = 1024;
+
 void ShadowMap::start() {
     // Executed on initialization
     box = new SkyBox();
@@ -27,7 +29,6 @@ void ShadowMap::start() {
     stbi_set_flip_vertically_on_load(true);
 
     normal_shader.load_shader("../res/shaders/ubershader.glsl");
-    // normal_shader.load_shader("../res/shaders/shadow.glsl");
     normal_shader.set_uniform_block_binding("Matrices", 0);
 
     light_source_shader.load_shader("../res/shaders/light.glsl");
@@ -37,15 +38,15 @@ void ShadowMap::start() {
     floor_shadow_shader.set_uniform_block_binding("Matrices", 0);
 
     // stbi_set_flip_vertically_on_load(false);
-    car.load_model("../res/models/backpack/backpack.obj");
     // car.load_model("../res/models/sponza/sponza.gltf");
     // stbi_set_flip_vertically_on_load(true);
+    car.load_model("../res/models/backpack/backpack.obj");
 
     floor.load_model("../res/models/def_cube/scene.gltf");
 
     light.load_model("../res/models/globe-sphere/globe-sphere.obj");
 
-    depth_map.init(1024, 1024);
+    depth_map.init(SHADOW_MAP_RESOLUTION, SHADOW_MAP_RESOLUTION);
     depth_map.add_spec(Framebuffer::FramebufferSpec::DEPTH_MAP);
     depth_map.create();
 
@@ -59,14 +60,25 @@ void ShadowMap::start() {
 
     car.add_texture(depth_map.get_texture(), "shadow_map");
     floor.add_texture(depth_map.get_texture(), "shadow_map");
+
+    tone_mapping_settings.info.exposure = 0.1f;
+    tone_mapping_settings.type          = HdrToneMappingSettings::HdrToneMapType::ACES_FILMIC;
+
+    gamma_settings.gamma = 2.2f;
+
+    Engine::Get().add_post_process_effect(PostProcessElements::HDR_TONEMAPPING, &tone_mapping_settings);
+    Engine::Get().add_post_process_effect(PostProcessElements::GAMMA_CORRECTION, &gamma_settings);
 }
 
 void ShadowMap::update(float dt) {
     // Executed each frame
     process_input(dt);
 
+    Engine::Get().add_post_process_effect(PostProcessElements::HDR_TONEMAPPING, &tone_mapping_settings);
+    Engine::Get().add_post_process_effect(PostProcessElements::GAMMA_CORRECTION, &gamma_settings);
+
     // first render to depth map
-    glViewport(0, 0, 1024, 1024);
+    glViewport(0, 0, SHADOW_MAP_RESOLUTION, SHADOW_MAP_RESOLUTION);
     depth_map.bind();
     glClear(GL_DEPTH_BUFFER_BIT);
     /* light projection matrix */
@@ -253,7 +265,22 @@ void ShadowMap::imgui_update() {
     ImGui::Checkbox("Draw Lights", &draw_lights);
     ImGui::Checkbox("Soft Shadows", &soft_shadows);
 
-    ImGui::Image((ImTextureID) depth_map.get_texture(), { 512, 512 }, ImVec2(1, 0), ImVec2(0, 1));
+    static const char *maps[] = { "None", "ACES Filmic", "Reinhard", "Exposure", "Uncharted 2" };
+
+    ImGui::Combo("Tone Mapping: ", &tone_map_type, maps, IM_ARRAYSIZE(maps));
+    tone_mapping_settings.type = static_cast<HdrToneMappingSettings::HdrToneMapType>(tone_map_type);
+    if (tone_map_type == 3) {
+        static float exposure = 0.1f;
+        ImGui::DragFloat("Exposure", &exposure);
+        tone_mapping_settings.info.exposure = exposure;
+    }
+
+    ImGui::DragFloat("Gamma", &gamma_settings.gamma);
+
+    static bool visualize_depth = false;
+    ImGui::Checkbox("Visualize Shadow Depth Map", &visualize_depth);
+    if (visualize_depth)
+        ImGui::Image((ImTextureID) depth_map.get_texture(), { 512, 512 }, ImVec2(1, 0), ImVec2(0, 1));
 
     ImGui::End();
 

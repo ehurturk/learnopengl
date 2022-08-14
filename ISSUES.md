@@ -54,3 +54,5 @@ Default objects and add texture? (e.g. instantiate Entity::Cube and later add a 
 Set post processing stack.
 Material.
 *****************
+
+With this tonemapping thing fps sometimes drop and ms gets up to 30ms per frame!!!!!
