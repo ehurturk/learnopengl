@@ -17,21 +17,22 @@ Soft PCF Shadow Mapping + Depth Buffer Visualized
 ![zigmus](gallery/shadows.jpeg)
 
 Project Roadmap (in order)
-* Batch Rendering
-* Instancing
-* PBR implementation
+* ~~HDR~~/Bloom
+* Cascading Shadow Maps (for better shadows)
+* Deferred Renderer (replace with Tiled Forward or Clustered Forward in the future)
 * Organizing code (very important since the code is shit)
-* Shadows (~~directional light~~)
-* ~~Normal Mapping~~
+* PBR implementation
 * Parallax Mapping
 * Support for Geometry Shaders
-* HDR/Bloom
-* Deferred Renderer (replace with Tiled Forward or Clustered Forward in the future)
+* Instancing
+* Batch Rendering
 * Support for Compute Shaders
 * Atmospheric Scattering
 * Volumetric Clouds
 * Terrain Rendering / Tesellation Shaders
-* Animation
+* Skeletal Animation
+* Shadows (~~directional light~~)
+* ~~Normal Mapping~~
 
 made possible thanks to learnopengl.com.
 
