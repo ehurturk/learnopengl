@@ -69,6 +69,9 @@ private:
                                  glm::vec3(0.50),
                                  glm::vec3(0.75),
                                  glm::vec3(1.0f) };
+    float light_intensity[4] = {
+        1.0f, 1.0f, 1.0f, 1.0f
+    };
 
     glm::vec3 entity_pos[2] = {
         glm::vec3(0.0f, 2.0f, 0.0f),
@@ -85,5 +88,5 @@ private:
     };
 
     glm::mat4 lightSpaceMatrix;
-    glm::vec3 dir_light_dir = glm::vec3(-3.0f, 3.0f, -1.0f);
+    glm::vec3 dir_light_dir = glm::vec3(3.5f, 18.0f, -1.0f);
 };

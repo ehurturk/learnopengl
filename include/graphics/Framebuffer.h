@@ -13,6 +13,10 @@
 // 	draw_image(buffer.get_texture());
 // 	on window resize:
 // 		buffer.resize(width, height);
+
+#define FRAMEBUFFER_BEGIN(buf) buf.bind()
+#define FRAMEBUFFER_END()      glBindFramebuffer(GL_FRAMEBUFFER, 0)
+
 class Framebuffer {
 public:
     enum class FramebufferSpec {
@@ -22,25 +26,29 @@ public:
     };
 
     Framebuffer();
-    ~Framebuffer();
+    virtual ~Framebuffer();
 
-    void init(unsigned int width, unsigned int height) {
+    virtual void init(unsigned int width, unsigned int height) {
         m_Width  = width;
         m_Height = height;
         glGenFramebuffers(1, &m_Framebuffer);
     }
-    void add_spec(FramebufferSpec spec);
-    void create();
-    void resize(unsigned int width, unsigned int height);
-    void bind() const { glBindFramebuffer(GL_FRAMEBUFFER, m_Framebuffer); }
+
+    virtual void add_spec(FramebufferSpec spec);
+    virtual void create();
+    virtual void resize(unsigned int width, unsigned int height);
+    virtual void bind() const { glBindFramebuffer(GL_FRAMEBUFFER, m_Framebuffer); }
 
     inline unsigned int get_texture() const { return m_TextureBuffer; }
 
-private:
-    unsigned int m_Width, m_Height;
+protected:
+    // for specific framebuffers that ultimately need these (the create method will be overriden anyway)
+    unsigned int m_Width;
+    unsigned int m_Height;
     unsigned int m_Framebuffer;
     unsigned int m_TextureBuffer;
     unsigned int m_RenderBuffer;
 
+private:
     std::vector<FramebufferSpec> m_Specs;
 };

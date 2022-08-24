@@ -159,6 +159,7 @@ float calculate_directional_shadows(vec4 fragPosLightSpace, vec3 normal, vec3 li
 
     float shadow = 0.0;
     if (soft_shadows == true) {
+        #define PCF_MULT 3
         vec2 texel_size = 1.0/textureSize(shadow_map, 0);
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
@@ -166,7 +167,7 @@ float calculate_directional_shadows(vec4 fragPosLightSpace, vec3 normal, vec3 li
                 shadow += currentDepth - bias > pcfDepth ? 1.0: 0.0;
             }
         }
-        shadow = shadow / 9.0;
+        shadow = shadow / (3 * 3);
     } else {
         shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
     }

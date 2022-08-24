@@ -65,7 +65,7 @@ void Mesh::draw(const Shader &shader) const {
             n = "";// whatever the basename is
 
         shader.setInt(base_name + n, i);
-        glBindTexture(GL_TEXTURE_2D, textures[i].id);
+        glBindTexture(textures[i].array ? GL_TEXTURE_2D_ARRAY : GL_TEXTURE_2D, textures[i].id);
     }
 
     glBindVertexArray(vao);

@@ -25,10 +25,11 @@ struct Texture {
     std::string type;
     ui32 id;
     std::string path;
+    bool array;
 };
 
 struct ResourceManager {
     static Image load_image_from_path(const std::string &path);
-    static Texture load_ogl_texture_from_path(const std::string &path, Texture::TextureType type = Texture::TextureType::DIFFUSE, bool srgb = true);
+    static Texture load_ogl_texture_from_path(const std::string &path, Texture::TextureType type = Texture::TextureType::DIFFUSE, bool srgb = true, bool array = false);
     static const char *load_file(const std::string &path);
 };

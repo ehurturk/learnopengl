@@ -7,7 +7,7 @@
 ShadowMap::ShadowMap() : Application("Shadow Mapping", 2560, 1600) {}
 ShadowMap::~ShadowMap() { delete box; }
 
-static constexpr int SHADOW_MAP_RESOLUTION = 2048;
+static constexpr int SHADOW_MAP_RESOLUTION = 1024;
 
 void ShadowMap::start() {
     // Executed on initialization
@@ -37,11 +37,7 @@ void ShadowMap::start() {
     floor_shadow_shader.load_shader("../res/shaders/ubershader.glsl");
     floor_shadow_shader.set_uniform_block_binding("Matrices", 0);
 
-    // stbi_set_flip_vertically_on_load(false);
-    // car.load_model("../res/models/sponza/sponza.gltf");
-    // stbi_set_flip_vertically_on_load(true);
     car.load_model("../res/models/backpack/backpack.obj");
-
     floor.load_model("../res/models/def_cube/scene.gltf");
 
     light.load_model("../res/models/globe-sphere/globe-sphere.obj");
@@ -54,14 +50,10 @@ void ShadowMap::start() {
     depth_map_shader.load_shader("../res/shaders/depth_map.glsl");
 
     Texture diffuse = ResourceManager::load_ogl_texture_from_path("../res/textures/hardwood.jpg", Texture::TextureType::DIFFUSE, true);
-    // Texture specular = ResourceManager::load_ogl_texture_from_path("../res/textures/hardwood_specular.jpg", Texture::TextureType::SPECULAR, true);
-    Texture normal = ResourceManager::load_ogl_texture_from_path("../res/textures/hardwood_normal.jpg", Texture::TextureType::NORMAL, false);
     floor.add_texture(diffuse);// diffuse
-    // floor.add_texture(specular);// diffuse
-    floor.add_texture(normal);// diffuse
 
-    car.add_texture(depth_map.get_texture(), "shadow_map");
-    floor.add_texture(depth_map.get_texture(), "shadow_map");
+    car.add_texture(depth_map.get_texture(), "shadow_map");  // TODO: add array = true
+    floor.add_texture(depth_map.get_texture(), "shadow_map");// TODO: add array = true
 
     tone_mapping_settings.info.exposure = 0.1f;
     tone_mapping_settings.type          = HdrToneMappingSettings::HdrToneMapType::ACES_FILMIC;
@@ -81,29 +73,37 @@ void ShadowMap::update(float dt) {
 
     // first render to depth map
     glViewport(0, 0, SHADOW_MAP_RESOLUTION, SHADOW_MAP_RESOLUTION);
-    depth_map.bind();
-    glClear(GL_DEPTH_BUFFER_BIT);
-    /* light projection matrix */
-    float near_plane = 0.1f, far_plane = 75.0f;
-    glm::mat4 lightProjection = glm::ortho(-35.0f, 35.0f, -35.0f, 35.0f, near_plane, far_plane);
 
-    /* light view matrix */
-    glm::mat4 lightView = glm::lookAt(dir_light_dir,               // position
-                                      glm::vec3(0.0f, 0.0f, 0.0f), // target
-                                      glm::vec3(0.0f, 1.0f, 0.0f));// up
+    /* clang-format off */
+    FRAMEBUFFER_BEGIN(depth_map);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        /* light projection matrix */
+        float near_plane = 0.1f;
+        float far_plane = 75.0f;
+        glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
 
-    /* light space matrix */
-    lightSpaceMatrix = lightProjection * lightView;
-    depth_map_shader.use();
-    depth_map_shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-    glCullFace(GL_FRONT);
-    shadow_pass();
-    glCullFace(GL_BACK);
+        /* light view matrix */
+        glm::mat4 lightView = glm::lookAt(dir_light_dir,               // position
+                                        glm::vec3(0.0f, 0.0f, 0.0f), // target
+                                        glm::vec3(0.0f, 1.0f, 0.0f));// up
+
+        /* light space matrix */
+        lightSpaceMatrix = lightProjection * lightView;
+        depth_map_shader.use();
+        depth_map_shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+        glCullFace(GL_FRONT);
+        shadow_pass();
+        glCullFace(GL_BACK);
+    FRAMEBUFFER_END();
+    /* clang-format on */
+
     std::pair<int, int> size = Engine::Get().get_viewport_size();
     glViewport(0, 0, size.first, size.second);
-    Engine::Get().get_default_framebuffer().bind();// bind back to Engine's default framebuffer
 
+    // bind back to Engine's default framebuffer
+    FRAMEBUFFER_BEGIN(Engine::Get().get_default_framebuffer());
     geometry_pass();
+    FRAMEBUFFER_END();
 }
 
 void ShadowMap::geometry_pass() {
@@ -173,9 +173,9 @@ void ShadowMap::geometry_pass() {
 
         constexpr float AMBIENT_INTENSITY = 0.1f;
         floor_shadow_shader.setVec3(pos.c_str(), light_pos[i]);
-        floor_shadow_shader.setVec3(am.c_str(), light_color[i].r * AMBIENT_INTENSITY, light_color[i].g * AMBIENT_INTENSITY, light_color[i].b * AMBIENT_INTENSITY);
-        floor_shadow_shader.setVec3(diff.c_str(), light_color[i]);
-        floor_shadow_shader.setVec3(spec.c_str(), light_color[i]);
+        floor_shadow_shader.setVec3(am.c_str(), light_color[i].r * AMBIENT_INTENSITY * light_intensity[i], light_color[i].g * AMBIENT_INTENSITY * light_intensity[i], light_color[i].b * AMBIENT_INTENSITY * light_intensity[i]);
+        floor_shadow_shader.setVec3(diff.c_str(), light_color[i] * light_intensity[i]);
+        floor_shadow_shader.setVec3(spec.c_str(), light_color[i] * light_intensity[i]);
         floor_shadow_shader.setFloat(constant.c_str(), 1.0f);
         floor_shadow_shader.setFloat(linear.c_str(), 0.09f);
         floor_shadow_shader.setFloat(quad.c_str(), 0.032f);
@@ -183,7 +183,7 @@ void ShadowMap::geometry_pass() {
 
     floor_shadow_shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
     floor_shadow_shader.setBool("soft_shadows", soft_shadows);
-    floor_shadow_shader.setBool("normal_enabled", normal_enabled);
+    floor_shadow_shader.setBool("normal_enabled", false);
     {
         glm::mat4 model = glm::mat4(1.0f);
         model           = glm::translate(model, entity_pos[1]);
@@ -243,6 +243,7 @@ void ShadowMap::imgui_update() {
             ImGui::Text("Point Light %d", i + 1);
             ImGui::DragFloat3("Position", glm::value_ptr(light_pos[i]));
             ImGui::ColorEdit4("Color", glm::value_ptr(light_color[i]));
+            ImGui::DragFloat("Intensity", &light_intensity[i]);
             ImGui::Separator();
             ImGui::PopID();
         }
@@ -272,7 +273,7 @@ void ShadowMap::imgui_update() {
     ImGui::Combo("Tone Mapping: ", &tone_map_type, maps, IM_ARRAYSIZE(maps));
     tone_mapping_settings.type = static_cast<HdrToneMappingSettings::HdrToneMapType>(tone_map_type);
     if (tone_map_type == 3) {
-        static float exposure = 0.1f;
+        static float exposure = 1.5f;
         ImGui::SliderFloat("Exposure", &exposure, 0.0f, 5.0f);
         tone_mapping_settings.info.exposure = exposure;
     }

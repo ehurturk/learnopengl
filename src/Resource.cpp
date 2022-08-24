@@ -11,7 +11,7 @@ Image ResourceManager::load_image_from_path(const std::string &path) {
     return res;
 }
 
-Texture ResourceManager::load_ogl_texture_from_path(const std::string &path, const Texture::TextureType type, bool srgb) {
+Texture ResourceManager::load_ogl_texture_from_path(const std::string &path, const Texture::TextureType type, bool srgb, bool array) {
     Image res = load_image_from_path(path);
     Texture tex;
 
@@ -27,6 +27,8 @@ Texture ResourceManager::load_ogl_texture_from_path(const std::string &path, con
         internalFormat = srgb ? GL_SRGB_ALPHA : GL_RGBA;
         dataFormat     = GL_RGBA;
     }
+
+    tex.array = array;
 
     glGenTextures(1, &tex.id);
     glBindTexture(GL_TEXTURE_2D, tex.id);

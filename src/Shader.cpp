@@ -19,45 +19,66 @@ void Shader::load_shader(const char *path) {
     std::string line;
     std::stringstream vertex;
     std::stringstream fragment;
+    std::stringstream geometry;
     int cur_type = 0;
+    std::unordered_map<int, bool> types;//types after vertex and fragment
     while (std::getline(file, line)) {
-
         if (line == "<FRAGMENT>")
             cur_type = 1;
         else if (line == "<VERTEX>")
             cur_type = 0;
+        else if (line == "<GEOMETRY>") {
+            cur_type        = 2;
+            types[cur_type] = true;
+        }
         if (cur_type == 0 && (line != "<VERTEX>"))
             vertex << line << "\n";
         else if (cur_type == 1 && line != "<FRAGMENT>")
             fragment << line << "\n";
+        else if (cur_type == 2 && line != "<GEOMETRY>")
+            geometry << line << "\n";
     }
     vertex << "\0";
     fragment << "\0";
+    geometry << "\0";
     file.close();
-
 
     std::string vertex_code = vertex.str().c_str();
     std::string frag_code   = fragment.str().c_str();
+    std::string geom_code   = fragment.str().c_str();
 
     const GLchar *vcode = vertex_code.c_str();
     const GLchar *fcode = frag_code.c_str();
+    const GLchar *gcode = frag_code.c_str();
 
-    ui32 vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
+    ui32 vertex_shader_id;
+    ui32 frag_shader_id;
+    ui32 geom_shader_id;
+
+    vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader_id, 1, &vcode, NULL);
     glCompileShader(vertex_shader_id);
     checkCompileErrors(vertex_shader_id, "VERTEX");
     glAttachShader(ID, vertex_shader_id);
-    ui32 frag_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
+    frag_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(frag_shader_id, 1, &fcode, NULL);
     glCompileShader(frag_shader_id);
     checkCompileErrors(frag_shader_id, "FRAGMENT");
     glAttachShader(ID, frag_shader_id);
-
+    if (types[2]) {
+        geom_shader_id = glCreateShader(GL_GEOMETRY_SHADER);
+        glShaderSource(geom_shader_id, 1, &gcode, NULL);
+        glCompileShader(geom_shader_id);
+        checkCompileErrors(geom_shader_id, "GEOMETRY");
+        glAttachShader(ID, geom_shader_id);
+    }
     glLinkProgram(ID);
     checkCompileErrors(ID, "PROGRAM");
     // delete the shader as it is linked into the program now and no longer necessary
     glDeleteShader(vertex_shader_id);
     glDeleteShader(frag_shader_id);
+    if (types[2])
+        glDeleteShader(geom_shader_id);
 }
 
 // activate the shader

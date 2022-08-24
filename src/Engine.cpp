@@ -53,12 +53,117 @@ void Engine::create(AppConfig cfg_) {
     cfg = cfg_;
 }
 
+void Engine::draw_viewport() {
+    static bool opt_fullscreen                = true;
+    static bool opt_padding                   = false;
+    static bool docking_enabled               = true;
+    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+
+    // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+    // because it would be confusing to have two docking targets within each others.
+    ImGuiWindowFlags window_flags_docking = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+    if (opt_fullscreen) {
+        const ImGuiViewport *viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->WorkPos);
+        ImGui::SetNextWindowSize(viewport->WorkSize);
+        ImGui::SetNextWindowViewport(viewport->ID);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        window_flags_docking |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+        window_flags_docking |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+    } else {
+        dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+    }
+
+    // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
+    // and handle the pass-thru hole, so we ask Begin() to not render a background.
+    if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+        window_flags_docking |= ImGuiWindowFlags_NoBackground;
+
+    if (!opt_padding)
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+    ImGui::Begin("DockSpace Demo", &docking_enabled, window_flags_docking);
+    if (!opt_padding)
+        ImGui::PopStyleVar();
+
+    if (opt_fullscreen)
+        ImGui::PopStyleVar(2);
+
+    // Submit the DockSpace
+    ImGuiIO &dock_io = ImGui::GetIO();
+    if (dock_io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
+        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+    }
+
+    if (ImGui::BeginMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            ImGui::MenuItem("Open...", "CTRL+O");
+            ImGui::MenuItem("Save...", "CTRL+S");
+            ImGui::MenuItem("Save as...", "CTRL+A");
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Options")) {
+            // Disabling fullscreen would allow the window to be moved to the front of other windows,
+            // which we can't undo at the moment without finer window depth/z control.
+            ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
+            ImGui::MenuItem("Padding", NULL, &opt_padding);
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Close", NULL, false))
+                docking_enabled = false;
+            ImGui::EndMenu();
+        }
+        ImGui::EndMenuBar();
+    }
+
+    /**================================================== *
+          * ==========  Viewport  ========== *
+          * ================================================== */
+    static bool viewport_open = true;
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
+    ImGui::Begin("Viewport", &viewport_open);
+
+    block_input = !ImGui::IsWindowFocused();
+
+    // Get the size of the child (i.e. the whole draw size of the windows).
+    ImVec2 wsize = ImGui::GetContentRegionAvail();
+    viewport_w   = wsize.x;
+    viewport_h   = wsize.y;
+
+    if (viewport_x != wsize.x || viewport_y != wsize.y) {
+        viewport_x = wsize.x;
+        viewport_y = wsize.y;
+        // TODO: On window resize
+        framebuffer_callback_fn(m_Window->get_raw_window(), viewport_x, viewport_h);
+    }
+    ImGui::Image((ImTextureID) m_PostProcessBuffer.get_texture(), wsize, ImVec2(0, 1), ImVec2(1, 0));
+
+    // Gizmos
+    ImGuizmo::SetOrthographic(false);
+    ImGuizmo::SetDrawlist();
+    float windowWidth  = (float) ImGui::GetWindowWidth();
+    float windowHeight = (float) ImGui::GetWindowHeight();
+    ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+    glm::mat4 &proj = m_Camera->get_projection_matrix();
+    glm::mat4 &view = m_Camera->get_view_matrix();
+
+    ImGui::End();
+    ImGui::PopStyleVar();
+
+    /* =======  End of Viewport  ======= */
+    m_App->imgui_update();
+    ImGui::End(); /* end of docking */
+    ImGui::Render();
+}
+
 void Engine::update() {
     while (m_Window->is_window_open()) {
         m_Window->update();
         m_Camera->update();
 
-        m_Framebuffer.bind();
+        FRAMEBUFFER_BEGIN(m_Framebuffer);
         glEnable(GL_DEPTH_TEST);
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -76,10 +181,11 @@ void Engine::update() {
         float cf = glfwGetTime();
         dt       = cf - lt;
         lt       = cf;
+        FRAMEBUFFER_END();
 
         m_App->update(dt);// render scene
 
-        m_PostProcessBuffer.bind();
+        FRAMEBUFFER_BEGIN(m_PostProcessBuffer);
         glDisable(GL_DEPTH_TEST);// disable depth test so screen-space quad isn't discarded due to depth test.
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -91,112 +197,10 @@ void Engine::update() {
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         if (!cfg.raw) {
-            static bool opt_fullscreen                = true;
-            static bool opt_padding                   = false;
-            static bool docking_enabled               = true;
-            static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-
-            // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-            // because it would be confusing to have two docking targets within each others.
-            ImGuiWindowFlags window_flags_docking = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-            if (opt_fullscreen) {
-                const ImGuiViewport *viewport = ImGui::GetMainViewport();
-                ImGui::SetNextWindowPos(viewport->WorkPos);
-                ImGui::SetNextWindowSize(viewport->WorkSize);
-                ImGui::SetNextWindowViewport(viewport->ID);
-                ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-                ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-                window_flags_docking |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-                window_flags_docking |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-            } else {
-                dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-            }
-
-            // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
-            // and handle the pass-thru hole, so we ask Begin() to not render a background.
-            if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-                window_flags_docking |= ImGuiWindowFlags_NoBackground;
-
-            if (!opt_padding)
-                ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-            ImGui::Begin("DockSpace Demo", &docking_enabled, window_flags_docking);
-            if (!opt_padding)
-                ImGui::PopStyleVar();
-
-            if (opt_fullscreen)
-                ImGui::PopStyleVar(2);
-
-            // Submit the DockSpace
-            ImGuiIO &dock_io = ImGui::GetIO();
-            if (dock_io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
-                ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-                ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-            }
-
-            if (ImGui::BeginMenuBar()) {
-                if (ImGui::BeginMenu("File")) {
-                    ImGui::MenuItem("Open...", "CTRL+O");
-                    ImGui::MenuItem("Save...", "CTRL+S");
-                    ImGui::MenuItem("Save as...", "CTRL+A");
-                    ImGui::EndMenu();
-                }
-                if (ImGui::BeginMenu("Options")) {
-                    // Disabling fullscreen would allow the window to be moved to the front of other windows,
-                    // which we can't undo at the moment without finer window depth/z control.
-                    ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
-                    ImGui::MenuItem("Padding", NULL, &opt_padding);
-                    ImGui::Separator();
-
-                    if (ImGui::MenuItem("Close", NULL, false))
-                        docking_enabled = false;
-                    ImGui::EndMenu();
-                }
-                ImGui::EndMenuBar();
-            }
-
-            /**================================================== *
-          * ==========  Viewport  ========== *
-          * ================================================== */
-            static bool viewport_open = true;
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
-            ImGui::Begin("Viewport", &viewport_open);
-
-            block_input = !ImGui::IsWindowFocused();
-
-            // Get the size of the child (i.e. the whole draw size of the windows).
-            ImVec2 wsize = ImGui::GetContentRegionAvail();
-            viewport_w   = wsize.x;
-            viewport_h   = wsize.y;
-
-            if (viewport_x != wsize.x || viewport_y != wsize.y) {
-                viewport_x = wsize.x;
-                viewport_y = wsize.y;
-                // TODO: On window resize
-                framebuffer_callback_fn(m_Window->get_raw_window(), viewport_x, viewport_h);
-            }
-            ImGui::Image((ImTextureID) m_PostProcessBuffer.get_texture(), wsize, ImVec2(0, 1), ImVec2(1, 0));
-
-            // Gizmos
-            ImGuizmo::SetOrthographic(false);
-            ImGuizmo::SetDrawlist();
-            float windowWidth  = (float) ImGui::GetWindowWidth();
-            float windowHeight = (float) ImGui::GetWindowHeight();
-            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
-
-            glm::mat4 &proj = m_Camera->get_projection_matrix();
-            glm::mat4 &view = m_Camera->get_view_matrix();
-
-            ImGui::End();
-            ImGui::PopStyleVar();
-
-            /* =======  End of Viewport  ======= */
-            m_App->imgui_update();
-            ImGui::End(); /* end of docking */
-            ImGui::Render();
+            draw_viewport();
         }
 
         // now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         for (const auto &element : post_process_stack) {
             switch (element.first) {
@@ -205,24 +209,23 @@ void Engine::update() {
                     post_process_shader.setFloat("gamma", ((GammaCorrectionSettings *) element.second)->gamma);
                     break;
                 case PostProcessElements::HDR_TONEMAPPING:
-                    HdrToneMappingSettings *settings = (HdrToneMappingSettings *) element.second;
+                    const HdrToneMappingSettings *settings = (HdrToneMappingSettings *) element.second;
                     post_process_shader.setInt("tone_mapping", static_cast<int>(settings->type));// 0 for none, 1 for aces filmic, 2 for reinhard, 3 for exposure
                     switch (settings->type) {
-                        case HdrToneMappingSettings::HdrToneMapType::ACES_FILMIC:
-                            break;
                         case HdrToneMappingSettings::HdrToneMapType::EXPOSURE:
                             post_process_shader.setFloat("exposure", settings->info.exposure);// 0 for none, 1 for aces filmic, 2 for reinhard, 3 for exposure
                             break;
+                        case HdrToneMappingSettings::HdrToneMapType::ACES_FILMIC:
                         case HdrToneMappingSettings::HdrToneMapType::REINHARD:
-                            break;
                         case HdrToneMappingSettings::HdrToneMapType::UNCHARTED2:
-                            break;
                         case HdrToneMappingSettings::HdrToneMapType::NONE:
                             break;
                     }
                     break;
             }
         }
+
+        FRAMEBUFFER_END();
 
         if (cfg.raw) {
             glDisable(GL_DEPTH_TEST);// disable depth test so screen-space quad isn't discarded due to depth test.

@@ -47,9 +47,9 @@ void Model::add_texture(const Texture &tex) {
     }
 }
 
-void Model::add_texture(unsigned int tex, const std::string &base_name) {
+void Model::add_texture(unsigned int tex, const std::string &base_name, bool array) {
     for (int i = 0; i < meshes.size(); i++) {
-        meshes[i].textures.push_back({ .type = base_name, .id = tex });
+        meshes[i].textures.push_back({ .type = base_name, .id = tex, .array = array });
     }
 }
 

@@ -81,6 +81,7 @@ public:
 
     inline Framebuffer &get_default_framebuffer() { return m_Framebuffer; }
 
+    // returns the size of the raw glfw window if raw mode is enabled, else returns the size of the IMGUI viewport
     std::pair<int, int> get_viewport_size() {
         if (cfg.raw) {
             int w, h;
@@ -99,6 +100,8 @@ private:
     void framebuffer_callback_fn(GLFWwindow *, int, int);
     void mouse_input_callback_fn(GLFWwindow *, double, double);
     void key_input_callback_fn(GLFWwindow *, int, int, int, int);
+
+    void draw_viewport();
 
     AppConfig cfg;
     std::unique_ptr<Window> m_Window;

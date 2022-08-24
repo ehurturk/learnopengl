@@ -20,7 +20,7 @@ public:
 
     void add_texture(const std::string &path);
     void add_texture(const Texture &tex);
-    void add_texture(unsigned int tex, const std::string &base_name);
+    void add_texture(unsigned int tex, const std::string &base_name, bool array = false);
 
 private:
     enum class ModelType {
