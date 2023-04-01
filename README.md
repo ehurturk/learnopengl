@@ -1,5 +1,4 @@
 Engine type of thing that is built while learning OpenGL.
-The code may be trash rn, because I don't like C++ ZMANG!
 
 Features:
 
